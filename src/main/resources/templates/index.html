@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Inicio')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: cabecera}"></header>
+
+<main class="contenedor">
+    <h2>Aplicacion en marcha</h2>
+    <p>Spring Boot + Thymeleaf + MariaDB funcionando correctamente.</p>
+
+    <div th:replace="~{fragments/layout :: avisos}"></div>
+
+    <div class="tarjetas">
+        <div class="tarjeta">
+            <h3>Spring Boot 4</h3>
+            <p>Arranque automatico, inyeccion de dependencias y servidor web embebido.</p>
+        </div>
+        <div class="tarjeta">
+            <h3>Thymeleaf</h3>
+            <p>Plantillas HTML renderizadas en el servidor.</p>
+        </div>
+        <div class="tarjeta">
+            <h3>MariaDB + JPA</h3>
+            <p>Persistencia con Spring Data JPA y Hibernate.</p>
+        </div>
+    </div>
+
+    <p class="acciones">
+        <a class="boton" th:href="@{/notas}">Ir al ejemplo CRUD de notas</a>
+    </p>
+</main>
+
+<footer class="pie">
+    <p>telosabes2026 &middot; Spring Boot 4 + Thymeleaf + MariaDB</p>
+</footer>
+
+</body>
+</html>

@@ -1,10 +1,12 @@
-# .gitignore para proyectos Java
-
-# ---------- Compilación / build ----------
+# ---------- Compilacion / build ----------
 # Maven
 target/
+!**/src/main/**/target/
+!**/src/test/**/target/
 # Gradle / Ant
 build/
+!**/src/main/**/build/
+!**/src/test/**/build/
 # Salida de IDEs
 out/
 bin/
@@ -13,15 +15,20 @@ bin/
 *.war
 *.ear
 *.nar
+# El wrapper de Maven SI debe subirse
+!mvnw
+!mvnw.cmd
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
 
 # ---------- Gradle ----------
 .gradle/
 gradle-app.setting
 !gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
 
 # ---------- Maven ----------
 .mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -35,6 +42,12 @@ dependency-reduced-pom.xml
 *.keystore
 *.jks
 src/main/resources/application-secret*.properties
+src/main/resources/application-local.properties
+
+# ---------- Archivos de base de datos ----------
+*.db
+*.mdb
+*.log
 
 # ---------- IntelliJ IDEA ----------
 .idea/
@@ -42,10 +55,14 @@ src/main/resources/application-secret*.properties
 *.iws
 *.ipr
 
-# ---------- Eclipse ----------
+# ---------- Eclipse / STS ----------
 .classpath
 .project
 .settings/
+.factorypath
+.apt_generated
+.springBeans
+.sts4-cache
 
 # ---------- VS Code ----------
 .vscode/
@@ -53,7 +70,6 @@ src/main/resources/application-secret*.properties
 # ---------- NetBeans ----------
 /nbproject/private/
 /nbbuild/
-/dist/
 /nbdist/
 /.nb-gradle/
 

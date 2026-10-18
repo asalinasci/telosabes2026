@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Notas')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: cabecera}"></header>
+
+<main class="contenedor">
+    <h2>Notas</h2>
+    <p class="ayuda">Ejemplo completo: formulario &rarr; controlador &rarr; JPA &rarr; MariaDB.</p>
+
+    <div th:replace="~{fragments/layout :: avisos}"></div>
+
+    <!-- ===== Formulario de alta ===== -->
+    <section class="panel">
+        <h3>Nueva nota</h3>
+        <form th:action="@{/notas}" th:object="${nota}" method="post">
+
+            <label for="titulo">Titulo *</label>
+            <input type="text" id="titulo" th:field="*{titulo}" maxlength="100"
+                   th:classappend="${#fields.hasErrors('titulo')} ? 'con-error'">
+            <p class="error-campo" th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}">Error</p>
+
+            <label for="contenido">Contenido</label>
+            <textarea id="contenido" th:field="*{contenido}" rows="3" maxlength="500"
+                      th:classappend="${#fields.hasErrors('contenido')} ? 'con-error'"></textarea>
+            <p class="error-campo" th:if="${#fields.hasErrors('contenido')}" th:errors="*{contenido}">Error</p>
+
+            <button class="boton" type="submit">Guardar</button>
+        </form>
+    </section>
+
+    <!-- ===== Listado ===== -->
+    <section class="panel">
+        <h3>Listado</h3>
+
+        <p th:if="${#lists.isEmpty(notas)}">Todavia no hay notas guardadas. Crea la primera.</p>
+
+        <table th:unless="${#lists.isEmpty(notas)}">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Titulo</th>
+                <th>Contenido</th>
+                <th>Creada</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="n : ${notas}">
+                <td th:text="${n.id}">1</td>
+                <td th:text="${n.titulo}">Titulo</td>
+                <td th:text="${n.contenido}">Contenido</td>
+                <td th:text="${#temporals.format(n.creadoEn, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</td>
+                <td>
+                    <form th:action="@{/notas/{id}/eliminar(id=${n.id})}" method="post"
+                          onsubmit="return confirm('¿Eliminar esta nota?');">
+                        <button class="boton peligro" type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer class="pie">
+    <p>telosabes2026 &middot; Spring Boot 4 + Thymeleaf + MariaDB</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' | telosabes2026'">telosabes2026</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+<!-- ===== Cabecera reutilizable por todas las paginas ===== -->
+<header th:fragment="cabecera" class="cabecera">
+    <a class="marca" th:href="@{/}">telosabes2026</a>
+    <nav>
+        <a th:href="@{/}">Inicio</a>
+        <a th:href="@{/notas}">Notas</a>
+    </nav>
+</header>
+
+<!-- ===== Avisos (mensajes flash) ===== -->
+<div th:fragment="avisos" class="avisos">
+    <p class="aviso ok" th:if="${mensaje}" th:text="${mensaje}"></p>
+    <p class="aviso error" th:if="${errorGlobal}" th:text="${errorGlobal}"></p>
+</div>
+
+</body>
+</html>
