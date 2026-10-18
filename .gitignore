@@ -1,0 +1,73 @@
+# .gitignore para proyectos Java
+
+# ---------- Compilación / build ----------
+target/               # Maven
+build/                # Gradle / Ant
+out/                  # IntelliJ (salida)
+bin/                  # Eclipse / algunos IDEs
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# ---------- Gradle ----------
+.gradle/
+gradle-app.setting
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# ---------- Maven ----------
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+
+# ---------- Variables de entorno / secretos ----------
+.env
+*.env
+*.keystore
+*.jks
+src/main/resources/application-secret*.properties
+
+# ---------- IDEs ----------
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ---------- Sistema operativo ----------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+._*
+
+# Linux
+*~
