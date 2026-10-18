@@ -1,10 +1,13 @@
 # .gitignore para proyectos Java
 
 # ---------- Compilación / build ----------
-target/               # Maven
-build/                # Gradle / Ant
-out/                  # IntelliJ (salida)
-bin/                  # Eclipse / algunos IDEs
+# Maven
+target/
+# Gradle / Ant
+build/
+# Salida de IDEs
+out/
+bin/
 *.class
 *.jar
 *.war
@@ -15,7 +18,6 @@ bin/                  # Eclipse / algunos IDEs
 .gradle/
 gradle-app.setting
 !gradle/wrapper/gradle-wrapper.jar
-!gradle/wrapper/gradle-wrapper.properties
 
 # ---------- Maven ----------
 .mvn/timing.properties
@@ -34,24 +36,21 @@ dependency-reduced-pom.xml
 *.jks
 src/main/resources/application-secret*.properties
 
-# ---------- IDEs ----------
-# IntelliJ IDEA
+# ---------- IntelliJ IDEA ----------
 .idea/
 *.iml
 *.iws
 *.ipr
-out/
 
-# Eclipse
+# ---------- Eclipse ----------
 .classpath
 .project
 .settings/
-bin/
 
-# VS Code
+# ---------- VS Code ----------
 .vscode/
 
-# NetBeans
+# ---------- NetBeans ----------
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -64,10 +63,8 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
-
 # macOS
 .DS_Store
 ._*
-
 # Linux
 *~
