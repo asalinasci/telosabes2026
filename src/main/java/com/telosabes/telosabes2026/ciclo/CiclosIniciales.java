@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
@@ -15,8 +16,11 @@ import java.util.Map;
  * Se ejecuta en cada arranque, pero solo inserta los ciclos que faltan
  * (busca por siglas), asi que se puede arrancar la aplicacion tantas
  * veces como se quiera sin duplicar datos.
+ *
+ * Va antes que los modulos ({@code @Order(1)}): cada modulo necesita su ciclo.
  */
 @Component
+@Order(1)
 public class CiclosIniciales implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(CiclosIniciales.class);

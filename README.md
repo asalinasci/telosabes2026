@@ -49,11 +49,38 @@ tantas veces como se quiera:
 El alumno guarda el ciclo en `usuarios.ciclo_id` (clave ajena a `ciclos.id`). El ciclo se ve
 en el listado del administrador y en el panel del profesor.
 
+## Módulos profesionales
+
+Cada ciclo tiene sus módulos oficiales en la tabla `modulos` (clave ajena `modulos.ciclo_id`
+→ `ciclos.id`). Se dan de alta solos al arrancar (`ModulosIniciales`), después de los ciclos,
+y solo inserta los que faltan:
+
+| Ciclo | Módulos | 1º curso | 2º curso | Horas |
+|---|---|---|---|---|
+| `DAM` | 17 | 8 | 9 | 2000 |
+| `DAW` | 16 | 8 | 8 | 2000 |
+| `ASIR` | 17 | 8 | 9 | 2000 |
+| `SMR` | 15 | 7 | 8 | 2000 |
+
+Los datos son los de las tablas de la Consejería de Educación y Formación Profesional de la
+Región de Murcia (curso 2025/2026, nuevo sistema de FP). De cada módulo se guarda el código
+oficial del Real Decreto, el curso, el orden, las horas semanales y el reparto entre las horas
+que se imparten en el centro y las de la fase de formación en la empresa. Cada ciclo tiene
+2000 horas repartidas en dos cursos de 30 horas semanales.
+
+En todos los ciclos están los módulos transversales del nuevo sistema: *Itinerario personal
+para la empleabilidad I y II*, *Digitalización aplicada a los sectores productivos*,
+*Sostenibilidad aplicada al sistema productivo*, *Inglés profesional* y el *Proyecto
+intermodular*. El módulo optativo se guarda sin código, porque cada centro elige la optativa
+del catálogo.
+
+Se pueden consultar en el catálogo público **`/ciclos`**, enlazado desde la cabecera.
+
 ## Control de acceso
 
 | Ruta | Acceso |
 |---|---|
-| `/`, `/login`, `/registro`, `/css/**` | Público |
+| `/`, `/login`, `/registro`, `/ciclos`, `/css/**` | Público |
 | `/notas/**` | Cualquier usuario con sesión iniciada |
 | `/profesor/**` | `PROFESOR` y `ADMIN` |
 | `/admin/**` | Solo `ADMIN` |
@@ -75,6 +102,11 @@ telosabes2026/
 │   │   ├── Ciclo.java                # entidad: nombre y siglas
 │   │   ├── CicloRepository.java
 │   │   └── CiclosIniciales.java      # alta automática de DAM, DAW, ASIR y SMR
+│   ├── modulo/                       # módulos profesionales (tabla "modulos")
+│   │   ├── Modulo.java               # entidad, con ciclo (FK a ciclos) y horas
+│   │   ├── ModuloRepository.java
+│   │   ├── ModulosIniciales.java     # alta automática de los módulos de cada ciclo
+│   │   └── ModuloController.java     # catálogo público /ciclos
 │   ├── nota/                         # ejemplo CRUD completo (tabla "notas")
 │   │   ├── Nota.java                 # entidad, con autor (FK a usuarios)
 │   │   ├── NotaForm.java             # formulario: sin campo de autor
@@ -107,9 +139,11 @@ telosabes2026/
 │       ├── fragments/layout.html     # cabecera, navegación por rol y avisos
 │       ├── admin/usuarios.html
 │       ├── profesor/panel.html
+│       ├── modulos/lista.html        # catálogo de ciclos y módulos
 │       └── notas/lista.html
 ├── src/test/java/.../seguridad/SeguridadTests.java   # 14 pruebas de seguridad
 ├── src/test/java/.../ciclo/CicloTests.java           # 6 pruebas de ciclos y del registro
+├── src/test/java/.../modulo/ModuloTests.java         # 6 pruebas de los módulos
 ├── src/test/java/.../nota/NotaTests.java             # 5 pruebas del autor de las notas
 └── src/test/resources/application.properties         # H2 en memoria para tests
 ```
@@ -135,8 +169,8 @@ Si cambias credenciales, actualiza también `src/main/resources/application.prop
 ./mvnw spring-boot:run
 ```
 
-Al arrancar, Hibernate crea las tablas `notas`, `usuarios` y `ciclos`, y se dan de alta
-los cuatro ciclos formativos (DAM, DAW, ASIR y SMR).
+Al arrancar, Hibernate crea las tablas `notas`, `usuarios`, `ciclos` y `modulos`, y se dan de
+alta los cuatro ciclos formativos (DAM, DAW, ASIR y SMR) con sus módulos profesionales.
 
 ### 3. Crear el administrador (solo la primera vez)
 
@@ -165,10 +199,11 @@ UPDATE usuarios
 
 1. Abre <http://localhost:8080>
 2. Entra en **Registrarse**, crea un alumno y **elige el ciclo** que va a estudiar.
-3. Inicia sesión con el administrador en `/login`.
-4. En **Usuarios** (`/admin/usuarios`) verás el ciclo de cada alumno y podrás pulsar
+3. Consulta **Ciclos** (`/ciclos`) para ver los módulos de cada ciclo con sus horas.
+4. Inicia sesión con el administrador en `/login`.
+5. En **Usuarios** (`/admin/usuarios`) verás el ciclo de cada alumno y podrás pulsar
    *Hacer profesor* sobre ese alumno.
-5. Cierra sesión y entra con el alumno: ahora verá la opción **Profesor**.
+6. Cierra sesión y entra con el alumno: ahora verá la opción **Profesor**.
 
 ## El autor de las notas
 
@@ -187,7 +222,7 @@ como autor de cada nota:
 
 ```bash
 mvnw.cmd clean package      # genera el .jar en target/
-mvnw.cmd test               # 26 pruebas (usan H2, no necesitan MariaDB)
+mvnw.cmd test               # 32 pruebas (usan H2, no necesitan MariaDB)
 ```
 
 Pruebas incluidas en `SeguridadTests`:
@@ -210,6 +245,15 @@ Pruebas incluidas en `CicloTests`:
 - sin ciclo no se registra nadie
 - con un ciclo que no existe no se registra nadie
 - el listado del administrador muestra el ciclo de cada alumno
+
+Pruebas incluidas en `ModuloTests`:
+
+- los cuatro ciclos tienen sus módulos dados de alta (17, 16, 17 y 15)
+- cada ciclo suma 2000 horas
+- los módulos transversales están en todos los ciclos
+- el módulo de Programación de DAM tiene sus horas y su curso
+- los módulos salen ordenados por curso y el proyecto intermodular va el último
+- el catálogo `/ciclos` es público y muestra los ciclos con sus módulos
 
 Pruebas incluidas en `NotaTests`:
 

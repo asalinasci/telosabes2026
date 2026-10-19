@@ -13,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * Configuracion de Spring Security.
  *
  * Resumen de permisos:
- *   - Publico .............. /login, /registro, /css/**, pagina de inicio
+ *   - Publico .............. /login, /registro, /ciclos, /css/**, pagina de inicio
  *   - ADMIN                 /admin/**
  *   - PROFESOR y ADMIN      /profesor/**
  *   - Cualquier usuario autenticado: el resto (/ y /notas)
@@ -37,7 +37,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(autorizacion -> autorizacion
                     // Paginas y recursos publicos
-                    .requestMatchers("/", "/login", "/registro", "/acceso-denegado", "/error").permitAll()
+                    .requestMatchers("/", "/login", "/registro", "/ciclos", "/acceso-denegado", "/error").permitAll()
                     .requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/webjars/**").permitAll()
                     // Solo el administrador
                     .requestMatchers("/admin/**").hasRole("ADMIN")

@@ -32,6 +32,14 @@
     </div>
 
     <!-- Contenido segun el rol del usuario conectado -->
+    <section class="panel">
+        <h3>Ciclos formativos</h3>
+        <p>DAM, DAW, ASIR y SMR con sus modulos profesionales y sus horas.</p>
+        <ul>
+            <li><a th:href="@{/ciclos}">Ver ciclos y modulos</a>.</li>
+        </ul>
+    </section>
+
     <section class="panel" sec:authorize="isAuthenticated()">
         <h3>Tu sesion</h3>
         <p th:if="${usuarioActual}">Conectado como

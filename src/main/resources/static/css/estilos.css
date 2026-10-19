@@ -256,3 +256,44 @@ th {
 /* ---------- Listas dentro de paneles ---------- */
 .panel ul { margin: .6rem 0 0; padding-left: 1.2rem; }
 .panel ul li { margin-bottom: .35rem; }
+
+/* ---------- Ciclos y modulos ---------- */
+.ciclo-titulo {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin: 0 0 .5rem;
+    font-size: 1.05rem;
+}
+
+.ciclo-titulo .siglas {
+    background: #e8f3ec;
+    color: var(--primario);
+    border: 1px solid #cbe3d6;
+    border-radius: 6px;
+    padding: .1rem .5rem;
+    font-size: .85rem;
+    letter-spacing: .5px;
+}
+
+.curso-titulo {
+    margin: 1.25rem 0 .4rem;
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: #5b6472;
+}
+
+.codigo-modulo {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: .85rem;
+    color: #5b6472;
+    white-space: nowrap;
+}
+
+td.numero, th.numero {
+    text-align: right;
+    white-space: nowrap;
+}
+

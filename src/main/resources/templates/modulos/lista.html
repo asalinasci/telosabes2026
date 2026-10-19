@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Ciclos y modulos')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: cabecera}"></header>
+
+<main class="contenedor">
+    <h2>Ciclos formativos y sus modulos</h2>
+    <p class="ayuda">
+        Modulos profesionales de los ciclos de la Region de Murcia, con el codigo oficial
+        del Real Decreto, las horas semanales y el reparto entre las horas que se imparten
+        en el centro y las de la fase de formacion en la empresa.
+        Cada ciclo tiene 2000 horas repartidas en dos cursos de 30 horas semanales.
+    </p>
+
+    <div th:replace="~{fragments/layout :: avisos}"></div>
+
+    <p th:if="${#lists.isEmpty(ciclos)}">
+        Todavia no hay ciclos dados de alta.
+    </p>
+
+    <section class="panel" th:each="c : ${ciclos}">
+        <h3 class="ciclo-titulo">
+            <span class="siglas" th:text="${c.siglas}">DAM</span>
+            <span th:text="${c.nombre}">Desarrollo de Aplicaciones Multiplataforma</span>
+        </h3>
+
+        <p class="ayuda"
+           th:if="${modulosPorCiclo.get(c.id) == null or #lists.isEmpty(modulosPorCiclo.get(c.id))}">
+            Este ciclo todavia no tiene modulos dados de alta.
+        </p>
+
+        <div th:each="curso : ${#numbers.sequence(1, 2)}">
+            <h4 class="curso-titulo" th:text="${curso} + 'º curso'">1º curso</h4>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Codigo</th>
+                    <th>Modulo</th>
+                    <th class="numero">h/semana</th>
+                    <th class="numero">Horas centro</th>
+                    <th class="numero">Horas empresa</th>
+                    <th class="numero">Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="m : ${modulosPorCiclo.get(c.id)}" th:if="${m.curso == curso}">
+                    <td><span class="codigo-modulo" th:text="${m.codigo} ?: '--'">0485</span></td>
+                    <td th:text="${m.nombre}">Programacion</td>
+                    <td class="numero" th:text="${m.horasSemanales}">7</td>
+                    <td class="numero" th:text="${m.horasCentro}">195</td>
+                    <td class="numero" th:text="${m.horasEmpresa}">45</td>
+                    <td class="numero" th:text="${m.horasTotales}">240</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer class="pie">
+    <p>telosabes2026 &middot; Spring Boot 4 + Thymeleaf + MariaDB + Spring Security</p>
+</footer>
+
+</body>
+</html>
