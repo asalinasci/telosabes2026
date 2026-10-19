@@ -73,6 +73,10 @@ src/main/resources/application-local.properties
 /nbdist/
 /.nb-gradle/
 
+# ---------- Documentacion local ----------
+# Se queda en el disco, pero no se sube al repositorio
+/documentacion/
+
 # ---------- Sistema operativo ----------
 # Windows
 Thumbs.db
