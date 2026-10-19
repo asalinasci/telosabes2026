@@ -1,5 +1,6 @@
 package com.telosabes.telosabes2026.seguridad;
 
+import com.telosabes.telosabes2026.ciclo.CicloRepository;
 import com.telosabes.telosabes2026.usuario.Usuario;
 import com.telosabes.telosabes2026.usuario.UsuarioRepository;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,15 @@ class SeguridadTests {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
+    private CicloRepository cicloRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    /** Id del ciclo DAM, que siempre esta dado de alta al arrancar. */
+    private String cicloDam() {
+        return cicloRepository.findBySiglasIgnoreCase("DAM").orElseThrow().getId().toString();
+    }
 
     private Usuario crearUsuario(String nombre, String email, Rol rol, String claveEnClaro) {
         return usuarioRepository.save(
@@ -102,6 +111,7 @@ class SeguridadTests {
         mockMvc.perform(post("/registro").with(csrf())
                         .param("nombre", "Alumno Nuevo")
                         .param("email", "Nuevo@Ejemplo.com")
+                        .param("cicloId", cicloDam())
                         .param("clave", "clave1234")
                         .param("claveRepetida", "clave1234"))
                 .andExpect(status().is3xxRedirection())
@@ -110,6 +120,8 @@ class SeguridadTests {
         Usuario creado = usuarioRepository.findByEmailIgnoreCase("nuevo@ejemplo.com").orElseThrow();
         assertThat(creado.getRol()).isEqualTo(Rol.ALUMNO);
         assertThat(creado.getEmail()).isEqualTo("nuevo@ejemplo.com");
+        // El ciclo elegido se guarda en la ficha del alumno
+        assertThat(creado.getCiclo().getSiglas()).isEqualTo("DAM");
         // La contraseña nunca se guarda en claro
         assertThat(creado.getClave()).isNotEqualTo("clave1234").startsWith("$2");
     }
@@ -119,6 +131,7 @@ class SeguridadTests {
         mockMvc.perform(post("/registro").with(csrf())
                         .param("nombre", "Listillo")
                         .param("email", "listillo@ejemplo.com")
+                        .param("cicloId", cicloDam())
                         .param("clave", "clave1234")
                         .param("claveRepetida", "clave1234")
                         // intento de manipulacion: no existe en RegistroForm
@@ -136,6 +149,7 @@ class SeguridadTests {
         mockMvc.perform(post("/registro").with(csrf())
                         .param("nombre", "Otro")
                         .param("email", "repetido@ejemplo.com")
+                        .param("cicloId", cicloDam())
                         .param("clave", "clave1234")
                         .param("claveRepetida", "clave1234"))
                 .andExpect(status().isOk())
@@ -144,6 +158,7 @@ class SeguridadTests {
         mockMvc.perform(post("/registro").with(csrf())
                         .param("nombre", "Otro Mas")
                         .param("email", "otro@ejemplo.com")
+                        .param("cicloId", cicloDam())
                         .param("clave", "clave1234")
                         .param("claveRepetida", "clave9999"))
                 .andExpect(status().isOk())

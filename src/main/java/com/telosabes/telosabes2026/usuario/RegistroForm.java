@@ -2,6 +2,7 @@ package com.telosabes.telosabes2026.usuario;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
@@ -21,6 +22,10 @@ public class RegistroForm {
     @Email(message = "El correo no tiene un formato valido")
     @Size(max = 120, message = "El correo no puede superar los 120 caracteres")
     private String email;
+
+    /** Id del ciclo elegido: se comprueba contra la tabla "ciclos". */
+    @NotNull(message = "Elige el ciclo que vas a estudiar")
+    private Long cicloId;
 
     @NotBlank(message = "La contraseña es obligatoria")
     @Size(min = 8, max = 72, message = "La contraseña debe tener entre 8 y 72 caracteres")
@@ -47,6 +52,14 @@ public class RegistroForm {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Long getCicloId() {
+        return cicloId;
+    }
+
+    public void setCicloId(Long cicloId) {
+        this.cicloId = cicloId;
     }
 
     public String getClave() {

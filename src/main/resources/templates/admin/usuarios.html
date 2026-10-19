@@ -37,6 +37,7 @@
                 <th>#</th>
                 <th>Nombre</th>
                 <th>Correo</th>
+                <th>Ciclo</th>
                 <th>Rol</th>
                 <th>Registro</th>
                 <th></th>
@@ -47,6 +48,11 @@
                 <td th:text="${u.id}">1</td>
                 <td th:text="${u.nombre}">Nombre</td>
                 <td th:text="${u.email}">correo@ejemplo.com</td>
+                <td>
+                    <span th:if="${u.ciclo != null}" th:text="${u.ciclo.siglas}"
+                          th:title="${u.ciclo.nombre}">DAM</span>
+                    <span th:unless="${u.ciclo != null}" class="ayuda">Sin ciclo</span>
+                </td>
                 <td th:text="${u.rol.etiqueta}">Alumno</td>
                 <td th:text="${#temporals.format(u.fechaRegistro, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</td>
                 <td>

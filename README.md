@@ -26,10 +26,28 @@ Reglas importantes:
 
 - El formulario de registro **no tiene campo de rol**: el servicio asigna siempre `ALUMNO`,
   aunque alguien añada `rol=ADMIN` a mano en el envío.
+- El alumno **sí elige su ciclo** en el registro (`DAM`, `DAW`, `ASIR` o `SMR`). El
+  desplegable se rellena con la tabla `ciclos` y el servicio comprueba que el ciclo existe.
 - El administrador **no existe en la aplicación**: no hay pantalla para crearlo ni para
   editarlo, y **no aparece en ningún listado** (se filtra con `findByRolNot(ADMIN)`).
   Su contraseña se escribe directamente en la base de datos, cifrada con BCrypt.
 - Las contraseñas se guardan siempre con **BCrypt** (`BCryptPasswordEncoder`), nunca en claro.
+
+## Ciclos formativos
+
+La tabla `ciclos` guarda los cuatro ciclos del centro. Se dan de alta solos al arrancar
+(`CiclosIniciales`), y solo inserta los que faltan, así que se puede arrancar la aplicación
+tantas veces como se quiera:
+
+| Siglas | Nombre |
+|---|---|
+| `DAM` | Desarrollo de Aplicaciones Multiplataforma |
+| `DAW` | Desarrollo de Aplicaciones Web |
+| `ASIR` | Administración de Sistemas Informáticos y Redes |
+| `SMR` | Sistemas Microinformáticos y Redes |
+
+El alumno guarda el ciclo en `usuarios.ciclo_id` (clave ajena a `ciclos.id`). El ciclo se ve
+en el listado del administrador y en el panel del profesor.
 
 ## Control de acceso
 
@@ -53,6 +71,10 @@ telosabes2026/
 ├── src/main/java/com/telosabes/telosabes2026/
 │   ├── Telosabes2026Application.java # clase principal
 │   ├── home/HomeController.java      # página de inicio "/"
+│   ├── ciclo/                        # ciclos formativos (tabla "ciclos")
+│   │   ├── Ciclo.java                # entidad: nombre y siglas
+│   │   ├── CicloRepository.java
+│   │   └── CiclosIniciales.java      # alta automática de DAM, DAW, ASIR y SMR
 │   ├── nota/                         # ejemplo CRUD completo (tabla "notas")
 │   │   ├── Nota.java                 # entidad, con autor (FK a usuarios)
 │   │   ├── NotaForm.java             # formulario: sin campo de autor
@@ -67,10 +89,10 @@ telosabes2026/
 │   │   ├── UsuarioActualAdvice.java  # expone "usuarioActual" a las plantillas
 │   │   └── LoginController.java      # /login y /acceso-denegado
 │   ├── usuario/
-│   │   ├── Usuario.java              # entidad (tabla "usuarios")
+│   │   ├── Usuario.java              # entidad (tabla "usuarios", con ciclo_id)
 │   │   ├── UsuarioRepository.java
 │   │   ├── UsuarioService.java       # registro y promoción (reglas de rol)
-│   │   ├── RegistroForm.java         # formulario público de alumnos
+│   │   ├── RegistroForm.java         # formulario público: nombre, correo, ciclo y claves
 │   │   └── RegistroController.java   # /registro
 │   ├── admin/AdminUsuariosController.java   # /admin/usuarios
 │   └── profesor/ProfesorController.java     # /profesor
@@ -87,6 +109,7 @@ telosabes2026/
 │       ├── profesor/panel.html
 │       └── notas/lista.html
 ├── src/test/java/.../seguridad/SeguridadTests.java   # 14 pruebas de seguridad
+├── src/test/java/.../ciclo/CicloTests.java           # 6 pruebas de ciclos y del registro
 ├── src/test/java/.../nota/NotaTests.java             # 5 pruebas del autor de las notas
 └── src/test/resources/application.properties         # H2 en memoria para tests
 ```
@@ -112,7 +135,8 @@ Si cambias credenciales, actualiza también `src/main/resources/application.prop
 ./mvnw spring-boot:run
 ```
 
-Al arrancar, Hibernate crea las tablas `notas` y `usuarios`.
+Al arrancar, Hibernate crea las tablas `notas`, `usuarios` y `ciclos`, y se dan de alta
+los cuatro ciclos formativos (DAM, DAW, ASIR y SMR).
 
 ### 3. Crear el administrador (solo la primera vez)
 
@@ -140,9 +164,10 @@ UPDATE usuarios
 ### 4. Usar la aplicación
 
 1. Abre <http://localhost:8080>
-2. Entra en **Registrarse** y crea un alumno.
+2. Entra en **Registrarse**, crea un alumno y **elige el ciclo** que va a estudiar.
 3. Inicia sesión con el administrador en `/login`.
-4. En **Usuarios** (`/admin/usuarios`) pulsa *Hacer profesor* sobre ese alumno.
+4. En **Usuarios** (`/admin/usuarios`) verás el ciclo de cada alumno y podrás pulsar
+   *Hacer profesor* sobre ese alumno.
 5. Cierra sesión y entra con el alumno: ahora verá la opción **Profesor**.
 
 ## El autor de las notas
@@ -162,7 +187,7 @@ como autor de cada nota:
 
 ```bash
 mvnw.cmd clean package      # genera el .jar en target/
-mvnw.cmd test               # 20 pruebas (usan H2, no necesitan MariaDB)
+mvnw.cmd test               # 26 pruebas (usan H2, no necesitan MariaDB)
 ```
 
 Pruebas incluidas en `SeguridadTests`:
@@ -170,12 +195,21 @@ Pruebas incluidas en `SeguridadTests`:
 - las páginas de login y registro son públicas
 - sin sesión, `/admin/**` redirige al login
 - un alumno recibe 403 en `/admin/**` y en `/profesor/**`
-- el registro crea siempre un `ALUMNO` con la clave cifrada
+- el registro crea siempre un `ALUMNO` con la clave cifrada y el ciclo elegido
 - no se puede colar `rol=ADMIN` en el formulario de registro
 - se rechazan correos repetidos y contraseñas que no coinciden
 - login correcto e incorrecto con correo + contraseña
 - el listado del administrador no incluye al administrador
 - el administrador promueve a un alumno; un alumno no puede promoverse
+
+Pruebas incluidas en `CicloTests`:
+
+- los cuatro ciclos (DAM, DAW, ASIR, SMR) están dados de alta
+- el formulario de registro ofrece los cuatro ciclos
+- el registro guarda el ciclo elegido por el alumno
+- sin ciclo no se registra nadie
+- con un ciclo que no existe no se registra nadie
+- el listado del administrador muestra el ciclo de cada alumno
 
 Pruebas incluidas en `NotaTests`:
 

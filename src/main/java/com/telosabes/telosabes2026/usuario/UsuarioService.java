@@ -1,5 +1,7 @@
 package com.telosabes.telosabes2026.usuario;
 
+import com.telosabes.telosabes2026.ciclo.Ciclo;
+import com.telosabes.telosabes2026.ciclo.CicloRepository;
 import com.telosabes.telosabes2026.seguridad.Rol;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,17 +21,22 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final CicloRepository cicloRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository,
+                          CicloRepository cicloRepository,
+                          PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.cicloRepository = cicloRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     /**
-     * Registro publico de un alumno.
+     * Registro publico de un alumno, con el ciclo que va a estudiar.
      *
      * @throws EmailYaRegistradoException si el correo ya esta en uso
+     * @throws CicloNoValidoException     si el ciclo elegido no existe
      */
     @Transactional
     public Usuario registrarAlumno(RegistroForm formulario) {
@@ -39,11 +46,16 @@ public class UsuarioService {
             throw new EmailYaRegistradoException(email);
         }
 
+        // El ciclo se busca en la base de datos: no nos fiamos del formulario
+        Ciclo ciclo = cicloRepository.findById(formulario.getCicloId())
+                .orElseThrow(() -> new CicloNoValidoException(formulario.getCicloId()));
+
         Usuario alumno = new Usuario(
                 formulario.getNombre().trim(),
                 email,
                 passwordEncoder.encode(formulario.getClave()),
-                Rol.ALUMNO);
+                Rol.ALUMNO,
+                ciclo);
 
         return usuarioRepository.save(alumno);
     }

@@ -1,13 +1,18 @@
 package com.telosabes.telosabes2026.usuario;
 
+import com.telosabes.telosabes2026.ciclo.Ciclo;
 import com.telosabes.telosabes2026.seguridad.Rol;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
@@ -51,6 +56,16 @@ public class Usuario {
     @Column(nullable = false, length = 20)
     private Rol rol = Rol.ALUMNO;
 
+    /**
+     * Ciclo formativo que estudia el alumno.
+     *
+     * Puede ser null: el administrador se crea directamente en la base de
+     * datos y no pertenece a ningun ciclo.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ciclo_id", foreignKey = @ForeignKey(name = "fk_usuarios_ciclo"))
+    private Ciclo ciclo;
+
     @Column(nullable = false)
     private boolean activo = true;
 
@@ -62,10 +77,16 @@ public class Usuario {
     }
 
     public Usuario(String nombre, String email, String clave, Rol rol) {
+        this(nombre, email, clave, rol, null);
+    }
+
+    /** Constructor completo: el alumno se registra con el ciclo que va a estudiar. */
+    public Usuario(String nombre, String email, String clave, Rol rol, Ciclo ciclo) {
         this.nombre = nombre;
         this.email = email;
         this.clave = clave;
         this.rol = rol;
+        this.ciclo = ciclo;
         this.fechaRegistro = LocalDateTime.now();
     }
 
@@ -111,6 +132,14 @@ public class Usuario {
 
     public void setRol(Rol rol) {
         this.rol = rol;
+    }
+
+    public Ciclo getCiclo() {
+        return ciclo;
+    }
+
+    public void setCiclo(Ciclo ciclo) {
+        this.ciclo = ciclo;
     }
 
     public boolean isActivo() {

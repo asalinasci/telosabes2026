@@ -88,7 +88,7 @@ label {
     font-size: .9rem;
 }
 
-input[type="text"], textarea {
+input[type="text"], input[type="password"], textarea, select {
     width: 100%;
     padding: .55rem .65rem;
     border: 1px solid var(--borde);
@@ -97,13 +97,13 @@ input[type="text"], textarea {
     background: #fff;
 }
 
-input[type="text"]:focus, textarea:focus {
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
     outline: none;
     border-color: var(--primario);
     box-shadow: 0 0 0 3px rgba(47, 111, 78, .15);
 }
 
-input.con-error, textarea.con-error { border-color: var(--error); }
+input.con-error, textarea.con-error, select.con-error { border-color: var(--error); }
 
 .error-campo { color: var(--error); font-size: .85rem; margin: .25rem 0 0; }
 

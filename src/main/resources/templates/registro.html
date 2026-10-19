@@ -26,6 +26,14 @@
                th:classappend="${#fields.hasErrors('email')} ? 'con-error'">
         <p class="error-campo" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Error</p>
 
+        <label for="cicloId">Ciclo que vas a estudiar</label>
+        <select id="cicloId" th:field="*{cicloId}"
+                th:classappend="${#fields.hasErrors('cicloId')} ? 'con-error'">
+            <option value="">Elige tu ciclo...</option>
+            <option th:each="c : ${ciclos}" th:value="${c.id}" th:text="${c.etiqueta}">DAM</option>
+        </select>
+        <p class="error-campo" th:if="${#fields.hasErrors('cicloId')}" th:errors="*{cicloId}">Error</p>
+
         <label for="clave">Contraseña</label>
         <input type="password" id="clave" th:field="*{clave}"
                th:classappend="${#fields.hasErrors('clave')} ? 'con-error'">

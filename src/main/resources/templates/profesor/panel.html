@@ -27,6 +27,7 @@
                 <th>#</th>
                 <th>Nombre</th>
                 <th>Correo</th>
+                <th>Ciclo</th>
                 <th>Registro</th>
             </tr>
             </thead>
@@ -35,6 +36,11 @@
                 <td th:text="${a.id}">1</td>
                 <td th:text="${a.nombre}">Nombre</td>
                 <td th:text="${a.email}">correo@ejemplo.com</td>
+                <td>
+                    <span th:if="${a.ciclo != null}" th:text="${a.ciclo.siglas}"
+                          th:title="${a.ciclo.nombre}">DAM</span>
+                    <span th:unless="${a.ciclo != null}" class="ayuda">Sin ciclo</span>
+                </td>
                 <td th:text="${#temporals.format(a.fechaRegistro, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</td>
             </tr>
             </tbody>
