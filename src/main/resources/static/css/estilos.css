@@ -190,6 +190,21 @@ th {
     letter-spacing: .4px;
 }
 
+/* Misma etiqueta, pero sobre fondo claro (tablas y paneles) */
+.etiqueta-rol-tabla {
+    display: inline-block;
+    margin-left: .35rem;
+    background: #e8f3ec;
+    color: var(--primario);
+    border: 1px solid #cbe3d6;
+    border-radius: 999px;
+    padding: .1rem .5rem;
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+
+
 .boton.pequeno {
     margin: 0;
     padding: .35rem .7rem;

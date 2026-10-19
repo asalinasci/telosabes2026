@@ -54,11 +54,16 @@ telosabes2026/
 │   ├── Telosabes2026Application.java # clase principal
 │   ├── home/HomeController.java      # página de inicio "/"
 │   ├── nota/                         # ejemplo CRUD completo (tabla "notas")
+│   │   ├── Nota.java                 # entidad, con autor (FK a usuarios)
+│   │   ├── NotaForm.java             # formulario: sin campo de autor
+│   │   ├── NotaRepository.java
+│   │   └── NotaController.java       # rutas /notas
 │   ├── seguridad/
 │   │   ├── Rol.java                  # ADMIN, PROFESOR, ALUMNO
 │   │   ├── SecurityConfig.java       # reglas de acceso, login y logout
 │   │   ├── UsuarioPrincipal.java     # adapta Usuario a UserDetails
 │   │   ├── UsuarioDetailsService.java# carga el usuario en el login
+│   │   ├── UsuarioActual.java        # averigua el usuario de la sesión
 │   │   ├── UsuarioActualAdvice.java  # expone "usuarioActual" a las plantillas
 │   │   └── LoginController.java      # /login y /acceso-denegado
 │   ├── usuario/
@@ -82,6 +87,7 @@ telosabes2026/
 │       ├── profesor/panel.html
 │       └── notas/lista.html
 ├── src/test/java/.../seguridad/SeguridadTests.java   # 14 pruebas de seguridad
+├── src/test/java/.../nota/NotaTests.java             # 5 pruebas del autor de las notas
 └── src/test/resources/application.properties         # H2 en memoria para tests
 ```
 
@@ -139,11 +145,24 @@ UPDATE usuarios
 4. En **Usuarios** (`/admin/usuarios`) pulsa *Hacer profesor* sobre ese alumno.
 5. Cierra sesión y entra con el alumno: ahora verá la opción **Profesor**.
 
+## El autor de las notas
+
+El ejemplo CRUD de `/notas` guarda **automáticamente el usuario de la sesión**
+como autor de cada nota:
+
+- `NotaForm` solo tiene `titulo` y `contenido`: no existe un campo de autor que
+  se pueda manipular desde el navegador.
+- El controlador obtiene el usuario con `UsuarioActual` y lo asigna él mismo
+  (`new Nota(titulo, contenido, autor)`), así que **no se puede suplantar** a otro usuario.
+- En la base de datos la relación es `notas.autor_id` → `usuarios.id` (columna obligatoria).
+- El listado muestra el autor de cada nota con su nombre y su rol, y el formulario
+  avisa de quién va a quedar como autor antes de guardar.
+
 ## Compilar y probar
 
 ```bash
 mvnw.cmd clean package      # genera el .jar en target/
-mvnw.cmd test               # 15 pruebas (usan H2, no necesitan MariaDB)
+mvnw.cmd test               # 20 pruebas (usan H2, no necesitan MariaDB)
 ```
 
 Pruebas incluidas en `SeguridadTests`:
@@ -157,6 +176,14 @@ Pruebas incluidas en `SeguridadTests`:
 - login correcto e incorrecto con correo + contraseña
 - el listado del administrador no incluye al administrador
 - el administrador promueve a un alumno; un alumno no puede promoverse
+
+Pruebas incluidas en `NotaTests`:
+
+- la nota guarda como autor al usuario de la sesión
+- el autor no se puede falsificar enviando `autor`, `autor.id` o `autor_id`
+- el listado y el formulario muestran el autor
+- una nota sin título no se guarda
+- sin sesión iniciada no se puede crear una nota
 
 ## Variables de entorno (opcional)
 

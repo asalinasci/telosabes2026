@@ -1,10 +1,15 @@
 package com.telosabes.telosabes2026.nota;
 
+import com.telosabes.telosabes2026.usuario.Usuario;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -33,6 +38,17 @@ public class Nota {
     @Column(length = 500)
     private String contenido;
 
+    /**
+     * Autor de la nota: el usuario que tenia la sesion iniciada al crearla.
+     *
+     * Se rellena SIEMPRE en el controlador a partir de la sesion, nunca
+     * desde el formulario: asi nadie puede hacerse pasar por otro usuario.
+     */
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "autor_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_notas_autor"))
+    private Usuario autor;
+
     @Column(name = "creado_en", nullable = false, updatable = false)
     private LocalDateTime creadoEn = LocalDateTime.now();
 
@@ -40,9 +56,10 @@ public class Nota {
         // Requerido por JPA
     }
 
-    public Nota(String titulo, String contenido) {
+    public Nota(String titulo, String contenido, Usuario autor) {
         this.titulo = titulo;
         this.contenido = contenido;
+        this.autor = autor;
         this.creadoEn = LocalDateTime.now();
     }
 
@@ -68,6 +85,14 @@ public class Nota {
 
     public void setContenido(String contenido) {
         this.contenido = contenido;
+    }
+
+    public Usuario getAutor() {
+        return autor;
+    }
+
+    public void setAutor(Usuario autor) {
+        this.autor = autor;
     }
 
     public LocalDateTime getCreadoEn() {

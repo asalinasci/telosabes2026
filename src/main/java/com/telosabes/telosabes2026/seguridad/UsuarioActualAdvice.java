@@ -1,8 +1,6 @@
 package com.telosabes.telosabes2026.seguridad;
 
 import com.telosabes.telosabes2026.usuario.Usuario;
-import com.telosabes.telosabes2026.usuario.UsuarioRepository;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,24 +14,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @ControllerAdvice
 public class UsuarioActualAdvice {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioActual usuarioActual;
 
-    public UsuarioActualAdvice(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
+    public UsuarioActualAdvice(UsuarioActual usuarioActual) {
+        this.usuarioActual = usuarioActual;
     }
 
     @ModelAttribute("usuarioActual")
-    public Usuario usuarioActual(Authentication autenticacion) {
-        if (autenticacion == null || !autenticacion.isAuthenticated()
-                || autenticacion instanceof AnonymousAuthenticationToken) {
-            return null;
-        }
-
-        if (autenticacion.getPrincipal() instanceof UsuarioPrincipal principal) {
-            return principal.getUsuario();
-        }
-
-        // Por si la autenticacion no la hemos creado nosotros (tests, remember-me...)
-        return usuarioRepository.findByEmailIgnoreCase(autenticacion.getName()).orElse(null);
+    public Usuario usuarioConectado(Authentication autenticacion) {
+        return usuarioActual.de(autenticacion);
     }
 }
