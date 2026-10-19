@@ -126,6 +126,11 @@ telosabes2026/
 │   ├── crear-admin.cmd               # lanzador (Windows bloquea los .ps1)
 │   ├── crear-admin.ps1               # crea/cambia el administrador (hash BCrypt)
 │   └── GenerarHash.java              # utilidad para generar hashes BCrypt
+├── deploy/                           # publicar en un servidor Ubuntu
+│   ├── instalar.sh                   # instala Java, MariaDB y Nginx, y crea el servicio
+│   ├── crear-admin.sh                # crea/cambia el administrador (hash BCrypt)
+│   ├── telosabes2026.service         # unidad de systemd
+│   └── nginx-telosabes2026.conf      # Nginx como reverse proxy
 ├── src/main/java/com/telosabes/telosabes2026/
 │   ├── Telosabes2026Application.java # clase principal
 │   ├── home/HomeController.java      # página de inicio "/"
@@ -163,6 +168,7 @@ telosabes2026/
 │   └── profesor/ProfesorController.java     # /profesor
 ├── src/main/resources/
 │   ├── application.properties        # configuración (incluye MariaDB)
+│   ├── application-prod.properties   # perfil de producción (VPS + Nginx)
 │   ├── static/css/estilos.css
 │   └── templates/
 │       ├── index.html
@@ -243,6 +249,75 @@ UPDATE usuarios
 6. Entra con el alumno y abre **Mi perfil** (`/perfil`): ahí cambia él mismo su ciclo.
 7. Cierra sesión y entra otra vez con el administrador: el alumno ahora verá la opción
    **Profesor** si lo has promovido.
+
+## Publicar en un servidor (Ubuntu + Nginx)
+
+En `deploy/` están los ficheros para dejar la aplicación corriendo en un servidor Ubuntu
+con Nginx delante. La aplicación escucha **solo en `127.0.0.1:8080`** y Nginx es quien
+recibe el tráfico de internet (perfil `prod`).
+
+Qué monta `deploy/instalar.sh`:
+
+| Elemento | Dónde queda |
+|---|---|
+| Java 21, MariaDB, Nginx y los paquetes necesarios | instalados con `apt` |
+| Base de datos `telosabes2026` y su usuario | MariaDB (contraseña aleatoria) |
+| Aplicación | `/opt/telosabes2026/telosabes2026.jar` |
+| Credenciales de la base de datos | `/etc/telosabes2026.env` (permisos `600`, solo root) |
+| Servicio systemd (arranca solo al reiniciar) | `/etc/systemd/system/telosabes2026.service` |
+| Nginx (puerto 80 → 127.0.0.1:8080) | `/etc/nginx/sites-available/telosabes2026` |
+| Cortafuegos (22, 80 y 443) | `ufw` activo |
+
+### Pasos
+
+```bash
+# 1. En tu ordenador: compilar el JAR
+mvnw.cmd clean package -DskipTests        # Windows
+./mvnw clean package -DskipTests          # Linux/macOS
+
+# 2. Copiar el JAR y la carpeta deploy/ al servidor
+scp target/telosabes2026-0.0.1-SNAPSHOT.jar root@TU_IP:/root/despliegue/telosabes2026.jar
+scp -r deploy/* root@TU_IP:/root/despliegue/
+
+# 3. En el servidor (como root): instalar y publicar
+cd /root/despliegue
+chmod +x *.sh
+DB_PASSWORD='una-clave-larga-y-aleatoria' ./instalar.sh /root/despliegue/telosabes2026.jar
+
+# 4. Crear el administrador (cuando la aplicación ya ha arrancado una vez)
+./crear-admin.sh correo@ejemplo.com 'ClaveSecreta1!' "Administrador"
+```
+
+El script se puede ejecutar **varias veces**: instala lo que falte, actualiza el JAR y
+reinicia el servicio, pero **no toca los datos**.
+
+### Comandos útiles en el servidor
+
+```bash
+systemctl status telosabes2026      # estado del servicio
+journalctl -u telosabes2026 -f      # log en vivo
+systemctl restart telosabes2026     # reiniciar la aplicación
+systemctl reload nginx              # recargar la configuración de Nginx
+ufw status                          # estado del cortafuegos
+```
+
+### Para actualizar la aplicación más adelante
+
+```bash
+mvnw.cmd clean package -DskipTests
+scp target/telosabes2026-0.0.1-SNAPSHOT.jar root@TU_IP:/root/despliegue/telosabes2026.jar
+ssh root@TU_IP "cd /root/despliegue && ./instalar.sh /root/despliegue/telosabes2026.jar"
+```
+
+### Notas de seguridad
+
+- El puerto 8080 **no** se abre al exterior: solo lo usa Nginx desde dentro del servidor.
+- Los datos de conexión **no** están en el código: van en `/etc/telosabes2026.env`.
+- Sin dominio no hay HTTPS: mientras el sitio vaya por `http://`, las contraseñas viajan
+  sin cifrar. Cuando se tenga un dominio apuntando a la IP, se puede añadir HTTPS gratis
+  con Certbot (`apt install certbot python3-certbot-nginx` y `certbot --nginx`).
+- Conviene entrar por **clave SSH** y quitar el acceso por contraseña
+  (`PasswordAuthentication no` en `/etc/ssh/sshd_config`).
 
 ## El autor de las notas
 
