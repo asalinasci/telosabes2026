@@ -47,6 +47,8 @@
             (<span th:text="${usuarioActual.rol.etiqueta}">Rol</span>).
         </p>
         <ul>
+            <li><a th:href="@{/perfil}">Mi perfil</a>: tus datos y el ciclo que estudias
+                (puedes cambiarlo tu mismo).</li>
             <li sec:authorize="hasRole('ADMIN')">
                 <a th:href="@{/admin/usuarios}">Gestionar usuarios</a>: convertir alumnos en profesores.
             </li>

@@ -20,6 +20,7 @@
 
         <!-- Solo con sesion iniciada -->
         <span sec:authorize="isAuthenticated()">
+            <a th:href="@{/perfil}">Mi perfil</a>
             <a th:href="@{/notas}">Notas</a>
             <!-- Profesores y administrador -->
             <a sec:authorize="hasAnyRole('PROFESOR','ADMIN')" th:href="@{/profesor}">Profesor</a>

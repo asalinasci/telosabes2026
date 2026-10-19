@@ -18,9 +18,9 @@ Aplicación web con **Spring Boot + Thymeleaf + MariaDB + Spring Security**.
 
 | Rol | Cómo se crea | Permisos |
 |---|---|---|
-| `ALUMNO` | Formulario público `/registro` | Zona común y ejemplo de notas |
+| `ALUMNO` | Formulario público `/registro` | Zona común, notas y **su perfil** (puede cambiar su ciclo) |
 | `PROFESOR` | El administrador promueve a un alumno | Todo lo del alumno + listado de alumnos |
-| `ADMIN` | **Solo por SQL** (`db/crear-admin.ps1`) | Gestión de usuarios: promover alumnos a profesores |
+| `ADMIN` | **Solo por SQL** (`db/crear-admin.ps1`) | Gestión de usuarios: cambiar el ciclo, editar sus datos y promover alumnos a profesores |
 
 Reglas importantes:
 
@@ -47,7 +47,38 @@ tantas veces como se quiera:
 | `SMR` | Sistemas Microinformáticos y Redes |
 
 El alumno guarda el ciclo en `usuarios.ciclo_id` (clave ajena a `ciclos.id`). El ciclo se ve
-en el listado del administrador y en el panel del profesor.
+en el listado del administrador, en el panel del profesor y en **su propio perfil**, donde
+**el alumno puede cambiarlo él mismo** sin depender del administrador.
+
+## Zona del administrador
+
+En `/admin/usuarios` el administrador ve el listado de alumnos y profesores (nunca el
+administrador) y puede hacer tres cosas con cada usuario:
+
+- **Cambiar el ciclo**: un desplegable en el listado (con la opción *Sin ciclo*) que se
+  guarda en el momento, sin salir de la página.
+- **Editar sus datos**: nombre, correo y ciclo desde `/admin/usuarios/{id}/editar`.
+  El correo se guarda en minúsculas y no puede coincidir con el de otro usuario.
+- **Hacer profesor**: convierte el alumno en `PROFESOR`.
+
+El formulario de edición **no tiene campo de rol** (`EditarUsuarioForm`): el rol solo se
+cambia con *Hacer profesor*, así que no se puede enviar `rol=ADMIN` a mano. El servicio
+comprueba el ciclo contra la tabla `ciclos` (no se fía del formulario) y **rechaza cualquier
+cambio sobre la cuenta de administrador**, aunque se llame a la ruta directamente.
+
+## Perfil del usuario
+
+En `/perfil` (enlace **Mi perfil** en la cabecera) cada usuario con sesión iniciada ve sus
+datos: nombre, correo, rol y ciclo. Debajo tiene un desplegable para **cambiar de ciclo**
+cuando quiera, con la opción *Sin ciclo*.
+
+- El usuario **no viaja en el formulario**: se toma siempre de la sesión (`UsuarioActual`),
+  así que **nadie puede cambiar el ciclo de otro** ni aunque manipule la petición.
+- El ciclo se comprueba contra la tabla `ciclos`; si no existe, no se cambia nada.
+- El perfil se recarga de la base de datos (no del principal de la sesión, que se creó al
+  iniciar sesión y tendría el ciclo antiguo).
+- La cuenta de administrador ve el perfil, pero **sin desplegable**: sus datos no se
+  gestionan desde la aplicación.
 
 ## Módulos profesionales
 
@@ -81,7 +112,7 @@ Se pueden consultar en el catálogo público **`/ciclos`**, enlazado desde la ca
 | Ruta | Acceso |
 |---|---|
 | `/`, `/login`, `/registro`, `/ciclos`, `/css/**` | Público |
-| `/notas/**` | Cualquier usuario con sesión iniciada |
+| `/perfil/**`, `/notas/**` | Cualquier usuario con sesión iniciada |
 | `/profesor/**` | `PROFESOR` y `ADMIN` |
 | `/admin/**` | Solo `ADMIN` |
 | `/acceso-denegado` | Página 403 |
@@ -123,10 +154,12 @@ telosabes2026/
 │   ├── usuario/
 │   │   ├── Usuario.java              # entidad (tabla "usuarios", con ciclo_id)
 │   │   ├── UsuarioRepository.java
-│   │   ├── UsuarioService.java       # registro y promoción (reglas de rol)
+│   │   ├── UsuarioService.java       # registro, edición y ciclo (reglas de rol)
 │   │   ├── RegistroForm.java         # formulario público: nombre, correo, ciclo y claves
-│   │   └── RegistroController.java   # /registro
-│   ├── admin/AdminUsuariosController.java   # /admin/usuarios
+│   │   ├── EditarUsuarioForm.java    # formulario del admin: nombre, correo y ciclo (sin rol)
+│   │   ├── RegistroController.java   # /registro
+│   │   └── PerfilController.java     # /perfil (cada uno cambia su propio ciclo)
+│   ├── admin/AdminUsuariosController.java   # /admin/usuarios (ciclo, editar y promover)
 │   └── profesor/ProfesorController.java     # /profesor
 ├── src/main/resources/
 │   ├── application.properties        # configuración (incluye MariaDB)
@@ -138,12 +171,16 @@ telosabes2026/
 │       ├── error/403.html
 │       ├── fragments/layout.html     # cabecera, navegación por rol y avisos
 │       ├── admin/usuarios.html
+│       ├── admin/editar-usuario.html # editar nombre, correo y ciclo
+│       ├── usuario/perfil.html       # "Mi perfil": datos y cambio de ciclo
 │       ├── profesor/panel.html
 │       ├── modulos/lista.html        # catálogo de ciclos y módulos
 │       └── notas/lista.html
 ├── src/test/java/.../seguridad/SeguridadTests.java   # 14 pruebas de seguridad
 ├── src/test/java/.../ciclo/CicloTests.java           # 6 pruebas de ciclos y del registro
 ├── src/test/java/.../modulo/ModuloTests.java         # 6 pruebas de los módulos
+├── src/test/java/.../admin/AdminUsuariosTests.java   # 9 pruebas de la zona del administrador
+├── src/test/java/.../usuario/PerfilTests.java        # 7 pruebas del perfil y su ciclo
 ├── src/test/java/.../nota/NotaTests.java             # 5 pruebas del autor de las notas
 └── src/test/resources/application.properties         # H2 en memoria para tests
 ```
@@ -201,9 +238,11 @@ UPDATE usuarios
 2. Entra en **Registrarse**, crea un alumno y **elige el ciclo** que va a estudiar.
 3. Consulta **Ciclos** (`/ciclos`) para ver los módulos de cada ciclo con sus horas.
 4. Inicia sesión con el administrador en `/login`.
-5. En **Usuarios** (`/admin/usuarios`) verás el ciclo de cada alumno y podrás pulsar
-   *Hacer profesor* sobre ese alumno.
-6. Cierra sesión y entra con el alumno: ahora verá la opción **Profesor**.
+5. En **Usuarios** (`/admin/usuarios`) verás el ciclo de cada alumno, podrás cambiarlo con el
+   desplegable, pulsar **Editar** para cambiar su nombre o su correo, y *Hacer profesor*.
+6. Entra con el alumno y abre **Mi perfil** (`/perfil`): ahí cambia él mismo su ciclo.
+7. Cierra sesión y entra otra vez con el administrador: el alumno ahora verá la opción
+   **Profesor** si lo has promovido.
 
 ## El autor de las notas
 
@@ -222,7 +261,7 @@ como autor de cada nota:
 
 ```bash
 mvnw.cmd clean package      # genera el .jar en target/
-mvnw.cmd test               # 32 pruebas (usan H2, no necesitan MariaDB)
+mvnw.cmd test               # 48 pruebas (usan H2, no necesitan MariaDB)
 ```
 
 Pruebas incluidas en `SeguridadTests`:
@@ -254,6 +293,28 @@ Pruebas incluidas en `ModuloTests`:
 - el módulo de Programación de DAM tiene sus horas y su curso
 - los módulos salen ordenados por curso y el proyecto intermodular va el último
 - el catálogo `/ciclos` es público y muestra los ciclos con sus módulos
+
+Pruebas incluidas en `AdminUsuariosTests`:
+
+- el administrador cambia el ciclo de un alumno desde el desplegable del listado
+- puede dejarlo sin ciclo
+- con un ciclo que no existe no se cambia nada
+- el administrador edita nombre y correo (el correo se guarda en minúsculas)
+- la pantalla de edición carga los datos actuales
+- no se puede poner el correo de otro usuario
+- con el nombre vacío no se guarda
+- la cuenta de administrador no se puede editar (ni por GET ni por POST)
+- el listado ofrece el desplegable de ciclos y el enlace de editar
+
+Pruebas incluidas en `PerfilTests`:
+
+- el alumno ve su perfil con sus datos y su ciclo
+- cambia su ciclo desde su perfil
+- puede quedarse sin ciclo
+- con un ciclo que no existe no se cambia nada
+- cambiar el ciclo solo afecta al usuario conectado
+- sin sesión no se puede entrar al perfil
+- el administrador no puede cambiar su ciclo desde el perfil
 
 Pruebas incluidas en `NotaTests`:
 
@@ -290,3 +351,5 @@ spring.jpa.hibernate.ddl-auto=update
 - Las credenciales reales nunca deben subirse al repositorio: usa variables de
   entorno o un fichero `application-local.properties` (ya está en `.gitignore`).
 - El login se hace con el **correo electrónico**; los correos se guardan en minúsculas.
+- La carpeta `documentacion/` **no se sube al repositorio** (está en `.gitignore`),
+  pero se conserva en el disco local.

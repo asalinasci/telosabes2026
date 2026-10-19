@@ -124,6 +124,38 @@ input.con-error, textarea.con-error, select.con-error { border-color: var(--erro
 .boton:hover { filter: brightness(1.08); }
 .boton.peligro { background: var(--error); padding: .4rem .7rem; font-size: .85rem; margin: 0; }
 
+/* Boton pequeno, para las tablas */
+.boton.mini {
+    margin: 0;
+    padding: .3rem .6rem;
+    font-size: .8rem;
+    white-space: nowrap;
+}
+
+/* Boton sin color de fondo */
+.boton.secundario {
+    background: #fff;
+    color: var(--primario);
+    border: 1px solid var(--primario);
+}
+
+/* Fila de acciones dentro de una tabla (formularios en linea) */
+.fila-acciones {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+.fila-acciones form { margin: 0; }
+
+select.mini {
+    width: auto;
+    padding: .3rem .4rem;
+    font-size: .85rem;
+}
+
+
 /* ---------- Tablas ---------- */
 table { width: 100%; border-collapse: collapse; }
 

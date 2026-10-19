@@ -8,7 +8,8 @@
 <main class="contenedor">
     <h2>Gestion de usuarios</h2>
     <p class="ayuda">Zona exclusiva del administrador. Los datos del administrador
-        no se muestran ni se pueden modificar desde la aplicacion.</p>
+        no se muestran ni se pueden modificar desde la aplicacion.
+        Desde aqui puedes cambiar el ciclo de un alumno y editar sus datos.</p>
 
     <div th:replace="~{fragments/layout :: avisos}"></div>
 
@@ -40,7 +41,7 @@
                 <th>Ciclo</th>
                 <th>Rol</th>
                 <th>Registro</th>
-                <th></th>
+                <th>Acciones</th>
             </tr>
             </thead>
             <tbody>
@@ -49,20 +50,32 @@
                 <td th:text="${u.nombre}">Nombre</td>
                 <td th:text="${u.email}">correo@ejemplo.com</td>
                 <td>
-                    <span th:if="${u.ciclo != null}" th:text="${u.ciclo.siglas}"
-                          th:title="${u.ciclo.nombre}">DAM</span>
-                    <span th:unless="${u.ciclo != null}" class="ayuda">Sin ciclo</span>
+                    <!-- Cambiar el ciclo sin salir del listado -->
+                    <form class="fila-acciones"
+                          th:action="@{/admin/usuarios/{id}/ciclo(id=${u.id})}" method="post">
+                        <select name="cicloId" class="mini"
+                                th:attr="aria-label='Ciclo de ' + ${u.nombre}">
+                            <option value="">Sin ciclo</option>
+                            <option th:each="c : ${ciclos}" th:value="${c.id}" th:text="${c.siglas}"
+                                    th:selected="${u.ciclo != null and u.ciclo.id == c.id}">DAM</option>
+                        </select>
+                        <button class="boton mini" type="submit">Guardar</button>
+                    </form>
                 </td>
                 <td th:text="${u.rol.etiqueta}">Alumno</td>
                 <td th:text="${#temporals.format(u.fechaRegistro, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</td>
                 <td>
-                    <!-- Solo los alumnos se pueden convertir en profesores -->
-                    <form th:if="${u.rol.name() == 'ALUMNO'}"
-                          th:action="@{/admin/usuarios/{id}/promover(id=${u.id})}" method="post"
-                          onsubmit="return confirm('¿Convertir a este alumno en profesor?');">
-                        <button class="boton" type="submit">Hacer profesor</button>
-                    </form>
-                    <span th:if="${u.rol.name() == 'PROFESOR'}" class="ayuda">Ya es profesor</span>
+                    <div class="fila-acciones">
+                        <a class="boton mini" th:href="@{/admin/usuarios/{id}/editar(id=${u.id})}">Editar</a>
+
+                        <!-- Solo los alumnos se pueden convertir en profesores -->
+                        <form th:if="${u.rol.name() == 'ALUMNO'}"
+                              th:action="@{/admin/usuarios/{id}/promover(id=${u.id})}" method="post"
+                              onsubmit="return confirm('¿Convertir a este alumno en profesor?');">
+                            <button class="boton mini" type="submit">Hacer profesor</button>
+                        </form>
+                        <span th:if="${u.rol.name() == 'PROFESOR'}" class="ayuda">Ya es profesor</span>
+                    </div>
                 </td>
             </tr>
             </tbody>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Mi perfil')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: cabecera}"></header>
+
+<main class="contenedor">
+    <h2>Mi perfil</h2>
+
+    <div th:replace="~{fragments/layout :: avisos}"></div>
+
+    <section class="panel">
+        <h3>Tus datos</h3>
+
+        <table>
+            <tbody>
+            <tr>
+                <th>Nombre</th>
+                <td th:text="${usuario.nombre}">Nombre y apellidos</td>
+            </tr>
+            <tr>
+                <th>Correo</th>
+                <td th:text="${usuario.email}">correo@ejemplo.com</td>
+            </tr>
+            <tr>
+                <th>Rol</th>
+                <td><span class="etiqueta-rol-tabla" th:text="${usuario.rol.etiqueta}">Alumno</span></td>
+            </tr>
+            <tr>
+                <th>Ciclo</th>
+                <td>
+                    <span th:if="${usuario.ciclo != null}" th:text="${usuario.ciclo.etiqueta}">DAM</span>
+                    <span th:unless="${usuario.ciclo != null}" class="ayuda">Sin ciclo</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="panel" th:if="${puedeCambiarCiclo}">
+        <h3>Cambiar de ciclo</h3>
+        <p class="ayuda">Puedes cambiar el ciclo que estudias cuando quieras.</p>
+
+        <form th:action="@{/perfil/ciclo}" method="post">
+            <label for="cicloId">Ciclo que estudias</label>
+            <select id="cicloId" name="cicloId">
+                <option value="">Sin ciclo</option>
+                <option th:each="c : ${ciclos}" th:value="${c.id}" th:text="${c.etiqueta}"
+                        th:selected="${usuario.ciclo != null and usuario.ciclo.id == c.id}">DAM</option>
+            </select>
+
+            <div class="acciones">
+                <button class="boton" type="submit">Guardar ciclo</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="panel" th:unless="${puedeCambiarCiclo}">
+        <h3>Cuenta de administrador</h3>
+        <p class="ayuda">Los datos del administrador no se gestionan desde la aplicacion:
+            se cambian directamente en la base de datos.</p>
+    </section>
+</main>
+
+<footer class="pie">
+    <p>telosabes2026 &middot; Spring Boot 4 + Thymeleaf + MariaDB + Spring Security</p>
+</footer>
+
+</body>
+</html>

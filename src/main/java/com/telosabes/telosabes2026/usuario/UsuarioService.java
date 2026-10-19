@@ -89,6 +89,73 @@ public class UsuarioService {
         return usuarioRepository.findByRolNotOrderByRolAscNombreAsc(Rol.ADMIN);
     }
 
+    /**
+     * Datos actuales de un usuario.
+     *
+     * Se usa en la pantalla de perfil para no fiarse del principal de la
+     * sesion, que se creo al iniciar sesion y puede tener el ciclo antiguo.
+     */
+    @Transactional(readOnly = true)
+    public Usuario buscarPorId(Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No existe el usuario " + id));
+    }
+
+    /**
+     * Busca un usuario que el administrador pueda modificar.
+     *
+     * @throws IllegalArgumentException si no existe o es el administrador
+     */
+    @Transactional(readOnly = true)
+    public Usuario buscarEditable(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No existe el usuario " + id));
+
+        if (usuario.esAdministrador()) {
+            // El administrador no se toca nunca desde la aplicacion
+            throw new IllegalArgumentException("La cuenta de administrador no se puede modificar");
+        }
+        return usuario;
+    }
+
+    /**
+     * Cambia los datos de un usuario (nombre, correo y ciclo).
+     *
+     * @throws EmailYaRegistradoException si el correo ya lo usa otro usuario
+     * @throws CicloNoValidoException     si el ciclo elegido no existe
+     * @throws IllegalArgumentException   si el usuario no existe o es el administrador
+     */
+    @Transactional
+    public Usuario actualizarDatos(Long id, EditarUsuarioForm formulario) {
+        Usuario usuario = buscarEditable(id);
+        String email = normalizar(formulario.getEmail());
+
+        usuarioRepository.findByEmailIgnoreCase(email).ifPresent(otro -> {
+            if (!otro.getId().equals(id)) {
+                throw new EmailYaRegistradoException(email);
+            }
+        });
+
+        usuario.setNombre(formulario.getNombre().trim());
+        usuario.setEmail(email);
+        usuario.setCiclo(resolverCiclo(formulario.getCicloId()));
+
+        return usuarioRepository.save(usuario);
+    }
+
+    /**
+     * Cambia solo el ciclo de un usuario (desplegable del listado).
+     *
+     * @throws CicloNoValidoException   si el ciclo elegido no existe
+     * @throws IllegalArgumentException si el usuario no existe o es el administrador
+     */
+    @Transactional
+    public Usuario cambiarCiclo(Long id, Long cicloId) {
+        Usuario usuario = buscarEditable(id);
+        usuario.setCiclo(resolverCiclo(cicloId));
+        return usuarioRepository.save(usuario);
+    }
+
     /** Alumnos, para el listado de los profesores. */
     @Transactional(readOnly = true)
     public List<Usuario> listarAlumnos() {
@@ -97,6 +164,18 @@ public class UsuarioService {
 
     public long contarPorRol(Rol rol) {
         return usuarioRepository.countByRol(rol);
+    }
+
+    /**
+     * El ciclo se busca siempre en la base de datos, no nos fiamos del
+     * formulario. Vacio (null) significa "sin ciclo".
+     */
+    private Ciclo resolverCiclo(Long cicloId) {
+        if (cicloId == null) {
+            return null;
+        }
+        return cicloRepository.findById(cicloId)
+                .orElseThrow(() -> new CicloNoValidoException(cicloId));
     }
 
     private String normalizar(String email) {

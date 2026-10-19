@@ -20,6 +20,14 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @EntityGraph(attributePaths = "ciclo")
     Optional<Usuario> findByEmailIgnoreCase(String email);
 
+    /**
+     * Igual que el findById de JpaRepository, pero trayendo el ciclo en la
+     * misma consulta (la aplicacion usa spring.jpa.open-in-view=false).
+     */
+    @Override
+    @EntityGraph(attributePaths = "ciclo")
+    Optional<Usuario> findById(Long id);
+
     boolean existsByEmailIgnoreCase(String email);
 
     @EntityGraph(attributePaths = "ciclo")

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Editar usuario')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: cabecera}"></header>
+
+<main class="contenedor">
+    <h2>Editar usuario</h2>
+    <p class="ayuda">Puedes cambiar el nombre, el correo y el ciclo. El rol no se cambia
+        aqui: los alumnos se convierten en profesores con la accion
+        <em>Hacer profesor</em> del listado.</p>
+
+    <div th:replace="~{fragments/layout :: avisos}"></div>
+
+    <section class="panel">
+        <p class="ayuda">
+            Rol actual: <span class="etiqueta-rol-tabla" th:text="${usuario.rol.etiqueta}">Alumno</span>
+            &middot; Registrado el
+            <span th:text="${#temporals.format(usuario.fechaRegistro, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</span>
+        </p>
+
+        <form th:action="@{/admin/usuarios/{id}/editar(id=${usuario.id})}"
+              th:object="${editarUsuarioForm}" method="post">
+
+            <label for="nombre">Nombre y apellidos</label>
+            <input type="text" id="nombre" th:field="*{nombre}" maxlength="60"
+                   th:classappend="${#fields.hasErrors('nombre')} ? 'con-error'">
+            <p class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">Error</p>
+
+            <label for="email">Correo electronico</label>
+            <input type="text" id="email" th:field="*{email}" maxlength="120"
+                   th:classappend="${#fields.hasErrors('email')} ? 'con-error'">
+            <p class="error-campo" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Error</p>
+
+            <label for="cicloId">Ciclo</label>
+            <select id="cicloId" th:field="*{cicloId}"
+                    th:classappend="${#fields.hasErrors('cicloId')} ? 'con-error'">
+                <option value="">Sin ciclo</option>
+                <option th:each="c : ${ciclos}" th:value="${c.id}" th:text="${c.etiqueta}">DAM</option>
+            </select>
+            <p class="error-campo" th:if="${#fields.hasErrors('cicloId')}" th:errors="*{cicloId}">Error</p>
+
+            <div class="acciones">
+                <button class="boton" type="submit">Guardar cambios</button>
+                <a class="boton secundario" th:href="@{/admin/usuarios}">Cancelar</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<footer class="pie">
+    <p>telosabes2026 &middot; Spring Boot 4 + Thymeleaf + MariaDB + Spring Security</p>
+</footer>
+
+</body>
+</html>
