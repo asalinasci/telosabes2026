@@ -41,10 +41,10 @@ telosabes2026/
 ### 1. Crear la base de datos
 
 ```bash
-mariadb -u root -p < db/crear_bd.sql
+mariadb -u root -p -e "source db/crear_bd.sql"
 ```
 
-Esto crea la base `telosabes2026` y el usuario `telosabes` / `telosabes`.
+Esto crea la base `telosabes2026` y el usuario `telosabes2026` / `telosabes2026`.
 Si cambias credenciales, actualiza también `src/main/resources/application.properties`.
 
 ### 2. Arrancar la aplicación
@@ -84,8 +84,8 @@ Las credenciales de base de datos se pueden sobreescribir sin tocar el código:
 
 | Variable | Valor por defecto |
 |---|---|
-| `DB_USER` | `telosabes` |
-| `DB_PASSWORD` | `telosabes` |
+| `DB_USER` | `telosabes2026` |
+| `DB_PASSWORD` | `telosabes2026` |
 
 Ejemplo en PowerShell:
 
