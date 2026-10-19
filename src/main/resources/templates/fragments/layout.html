@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="es">
 <head th:fragment="head(titulo)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,19 +10,44 @@
 </head>
 <body>
 
-<!-- ===== Cabecera reutilizable por todas las paginas ===== -->
+<!-- ===== Cabecera reutilizable: los enlaces cambian segun el rol ===== -->
 <header th:fragment="cabecera" class="cabecera">
     <a class="marca" th:href="@{/}">telosabes2026</a>
+
     <nav>
         <a th:href="@{/}">Inicio</a>
-        <a th:href="@{/notas}">Notas</a>
+
+        <!-- Solo con sesion iniciada -->
+        <span sec:authorize="isAuthenticated()">
+            <a th:href="@{/notas}">Notas</a>
+            <!-- Profesores y administrador -->
+            <a sec:authorize="hasAnyRole('PROFESOR','ADMIN')" th:href="@{/profesor}">Profesor</a>
+            <!-- Solo administrador -->
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/usuarios}">Usuarios</a>
+        </span>
+
+        <!-- Sin sesion -->
+        <span sec:authorize="!isAuthenticated()">
+            <a th:href="@{/registro}">Registrarse</a>
+            <a th:href="@{/login}">Iniciar sesion</a>
+        </span>
     </nav>
+
+    <!-- Usuario conectado + boton de salir -->
+    <div class="sesion" sec:authorize="isAuthenticated()">
+        <span class="nombre-usuario" th:if="${usuarioActual}" th:text="${usuarioActual.nombre}">Nombre</span>
+        <span class="etiqueta-rol" th:if="${usuarioActual}" th:text="${usuarioActual.rol.etiqueta}">Rol</span>
+        <form th:action="@{/logout}" method="post">
+            <button class="boton pequeno" type="submit">Salir</button>
+        </form>
+    </div>
 </header>
 
 <!-- ===== Avisos (mensajes flash) ===== -->
 <div th:fragment="avisos" class="avisos">
     <p class="aviso ok" th:if="${mensaje}" th:text="${mensaje}"></p>
-    <p class="aviso error" th:if="${errorGlobal}" th:text="${errorGlobal}"></p>
+    <p class="aviso ok" th:if="${aviso}" th:text="${aviso}"></p>
+    <p class="aviso error" th:if="${error}" th:text="${error}"></p>
 </div>
 
 </body>

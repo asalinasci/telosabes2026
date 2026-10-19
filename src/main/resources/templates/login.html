@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Iniciar sesion | telosabes2026</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="pagina-auth">
+
+<main class="caja-auth">
+    <h1>telosabes2026</h1>
+    <h2>Iniciar sesion</h2>
+
+    <!-- Mensajes del flujo de Spring Security -->
+    <p class="aviso ok" th:if="${param.registrado}">Registro completado. Ya puedes iniciar sesion.</p>
+    <p class="aviso ok" th:if="${param.salir}">Has cerrado la sesion correctamente.</p>
+    <p class="aviso error" th:if="${param.error}">Correo o contraseña incorrectos.</p>
+
+    <form th:action="@{/login}" method="post">
+        <label for="email">Correo electronico</label>
+        <input type="text" id="email" name="email" autocomplete="username" autofocus required>
+
+        <label for="clave">Contraseña</label>
+        <input type="password" id="clave" name="clave" autocomplete="current-password" required>
+
+        <button class="boton ancho" type="submit">Entrar</button>
+    </form>
+
+    <p class="pie-auth">
+        ¿Todavia no tienes cuenta?
+        <a th:href="@{/registro}">Registrate como alumno</a>
+    </p>
+</main>
+
+</body>
+</html>

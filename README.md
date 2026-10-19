@@ -1,6 +1,6 @@
 # telosabes2026
 
-Aplicación web con **Spring Boot + Thymeleaf + MariaDB**.
+Aplicación web con **Spring Boot + Thymeleaf + MariaDB + Spring Security**.
 
 ## Tecnologías
 
@@ -8,32 +8,81 @@ Aplicación web con **Spring Boot + Thymeleaf + MariaDB**.
 |---|---|
 | Java | 21 (Temurin LTS) |
 | Spring Boot | 4.1.1 |
+| Spring Security | 7.1 |
 | Spring Data JPA / Hibernate | 7.4 |
 | Thymeleaf | 3.1 |
 | MariaDB | 11.6 |
 | Maven | 3.10 (wrapper incluido) |
+
+## Roles de usuario
+
+| Rol | Cómo se crea | Permisos |
+|---|---|---|
+| `ALUMNO` | Formulario público `/registro` | Zona común y ejemplo de notas |
+| `PROFESOR` | El administrador promueve a un alumno | Todo lo del alumno + listado de alumnos |
+| `ADMIN` | **Solo por SQL** (`db/crear-admin.ps1`) | Gestión de usuarios: promover alumnos a profesores |
+
+Reglas importantes:
+
+- El formulario de registro **no tiene campo de rol**: el servicio asigna siempre `ALUMNO`,
+  aunque alguien añada `rol=ADMIN` a mano en el envío.
+- El administrador **no existe en la aplicación**: no hay pantalla para crearlo ni para
+  editarlo, y **no aparece en ningún listado** (se filtra con `findByRolNot(ADMIN)`).
+  Su contraseña se escribe directamente en la base de datos, cifrada con BCrypt.
+- Las contraseñas se guardan siempre con **BCrypt** (`BCryptPasswordEncoder`), nunca en claro.
+
+## Control de acceso
+
+| Ruta | Acceso |
+|---|---|
+| `/`, `/login`, `/registro`, `/css/**` | Público |
+| `/notas/**` | Cualquier usuario con sesión iniciada |
+| `/profesor/**` | `PROFESOR` y `ADMIN` |
+| `/admin/**` | Solo `ADMIN` |
+| `/acceso-denegado` | Página 403 |
 
 ## Estructura del proyecto
 
 ```
 telosabes2026/
 ├── db/
-│   └── crear_bd.sql                  # crea la base de datos y el usuario
+│   ├── crear_bd.sql                  # crea la base de datos y su usuario
+│   ├── crear-admin.cmd               # lanzador (Windows bloquea los .ps1)
+│   ├── crear-admin.ps1               # crea/cambia el administrador (hash BCrypt)
+│   └── GenerarHash.java              # utilidad para generar hashes BCrypt
 ├── src/main/java/com/telosabes/telosabes2026/
 │   ├── Telosabes2026Application.java # clase principal
 │   ├── home/HomeController.java      # página de inicio "/"
-│   └── nota/                         # ejemplo CRUD completo
-│       ├── Nota.java                 # entidad JPA (tabla "notas")
-│       ├── NotaRepository.java       # Spring Data JPA
-│       └── NotaController.java       # rutas /notas
+│   ├── nota/                         # ejemplo CRUD completo (tabla "notas")
+│   ├── seguridad/
+│   │   ├── Rol.java                  # ADMIN, PROFESOR, ALUMNO
+│   │   ├── SecurityConfig.java       # reglas de acceso, login y logout
+│   │   ├── UsuarioPrincipal.java     # adapta Usuario a UserDetails
+│   │   ├── UsuarioDetailsService.java# carga el usuario en el login
+│   │   ├── UsuarioActualAdvice.java  # expone "usuarioActual" a las plantillas
+│   │   └── LoginController.java      # /login y /acceso-denegado
+│   ├── usuario/
+│   │   ├── Usuario.java              # entidad (tabla "usuarios")
+│   │   ├── UsuarioRepository.java
+│   │   ├── UsuarioService.java       # registro y promoción (reglas de rol)
+│   │   ├── RegistroForm.java         # formulario público de alumnos
+│   │   └── RegistroController.java   # /registro
+│   ├── admin/AdminUsuariosController.java   # /admin/usuarios
+│   └── profesor/ProfesorController.java     # /profesor
 ├── src/main/resources/
 │   ├── application.properties        # configuración (incluye MariaDB)
-│   ├── static/css/estilos.css        # estilos
+│   ├── static/css/estilos.css
 │   └── templates/
 │       ├── index.html
-│       ├── fragments/layout.html     # cabecera y avisos reutilizables
+│       ├── login.html
+│       ├── registro.html
+│       ├── error/403.html
+│       ├── fragments/layout.html     # cabecera, navegación por rol y avisos
+│       ├── admin/usuarios.html
+│       ├── profesor/panel.html
 │       └── notas/lista.html
-└── src/test/resources/application.properties   # H2 en memoria para tests
+├── src/test/java/.../seguridad/SeguridadTests.java   # 14 pruebas de seguridad
+└── src/test/resources/application.properties         # H2 en memoria para tests
 ```
 
 ## Puesta en marcha
@@ -49,45 +98,72 @@ Si cambias credenciales, actualiza también `src/main/resources/application.prop
 
 ### 2. Arrancar la aplicación
 
-```bash
+```powershell
 # Windows
-mvnw.cmd spring-boot:run
+.\mvnw.cmd spring-boot:run
 
 # Linux / macOS
 ./mvnw spring-boot:run
 ```
 
-Abre el navegador en: <http://localhost:8080>
+Al arrancar, Hibernate crea las tablas `notas` y `usuarios`.
 
-- `http://localhost:8080/` → página de inicio
-- `http://localhost:8080/notas` → ejemplo CRUD (crear, listar, eliminar)
+### 3. Crear el administrador (solo la primera vez)
 
-Hibernate crea la tabla `notas` automáticamente al arrancar
-(`spring.jpa.hibernate.ddl-auto=update`).
+```powershell
+.\db\crear-admin.cmd -Email "admin@telosabes2026.local" -Clave "TuClaveSecreta1!"
+```
+
+- Genera el hash BCrypt y hace el `INSERT`/`UPDATE` en `usuarios`.
+- Pide la contraseña de `root` de MariaDB de forma interactiva.
+- Para cambiar la contraseña del administrador, vuelve a ejecutarlo con la nueva clave.
+- Se usa el lanzador `.cmd` porque Windows suele tener bloqueada la ejecución de
+  scripts `.ps1`. Si prefieres el script directamente:
+  `powershell -ExecutionPolicy Bypass -File db\crear-admin.ps1 -Email ... -Clave ...`
+- Opcional: `-ClaveRoot "..."` para pasar la contraseña de root sin que la pregunte
+  (útil para automatizar; queda visible en la línea de comandos).
+
+Equivalente manual (útil para entender qué se guarda):
+
+```sql
+UPDATE usuarios
+   SET clave = '$2a$10$rQ8k...'   -- hash BCrypt
+ WHERE email = 'admin@telosabes2026.local';
+```
+
+### 4. Usar la aplicación
+
+1. Abre <http://localhost:8080>
+2. Entra en **Registrarse** y crea un alumno.
+3. Inicia sesión con el administrador en `/login`.
+4. En **Usuarios** (`/admin/usuarios`) pulsa *Hacer profesor* sobre ese alumno.
+5. Cierra sesión y entra con el alumno: ahora verá la opción **Profesor**.
 
 ## Compilar y probar
 
 ```bash
 mvnw.cmd clean package      # genera el .jar en target/
-mvnw.cmd test               # ejecuta los tests (usan H2, no necesitan MariaDB)
+mvnw.cmd test               # 15 pruebas (usan H2, no necesitan MariaDB)
 ```
 
-El `.jar` se ejecuta con:
+Pruebas incluidas en `SeguridadTests`:
 
-```bash
-java -jar target/telosabes2026-0.0.1-SNAPSHOT.jar
-```
+- las páginas de login y registro son públicas
+- sin sesión, `/admin/**` redirige al login
+- un alumno recibe 403 en `/admin/**` y en `/profesor/**`
+- el registro crea siempre un `ALUMNO` con la clave cifrada
+- no se puede colar `rol=ADMIN` en el formulario de registro
+- se rechazan correos repetidos y contraseñas que no coinciden
+- login correcto e incorrecto con correo + contraseña
+- el listado del administrador no incluye al administrador
+- el administrador promueve a un alumno; un alumno no puede promoverse
 
 ## Variables de entorno (opcional)
-
-Las credenciales de base de datos se pueden sobreescribir sin tocar el código:
 
 | Variable | Valor por defecto |
 |---|---|
 | `DB_USER` | `telosabes2026` |
 | `DB_PASSWORD` | `telosabes2026` |
-
-Ejemplo en PowerShell:
 
 ```powershell
 $env:DB_PASSWORD="mi-clave-segura"; .\mvnw.cmd spring-boot:run
@@ -97,8 +173,8 @@ $env:DB_PASSWORD="mi-clave-segura"; .\mvnw.cmd spring-boot:run
 
 ```properties
 spring.datasource.url=jdbc:mariadb://localhost:3306/telosabes2026
-spring.datasource.username=${DB_USER:telosabes}
-spring.datasource.password=${DB_PASSWORD:telosabes}
+spring.datasource.username=${DB_USER:telosabes2026}
+spring.datasource.password=${DB_PASSWORD:telosabes2026}
 spring.jpa.hibernate.ddl-auto=update
 ```
 
@@ -108,3 +184,4 @@ spring.jpa.hibernate.ddl-auto=update
   usarse en producción: allí se recomienda `validate` junto con Flyway o Liquibase.
 - Las credenciales reales nunca deben subirse al repositorio: usa variables de
   entorno o un fichero `application-local.properties` (ya está en `.gitignore`).
+- El login se hace con el **correo electrónico**; los correos se guardan en minúsculas.

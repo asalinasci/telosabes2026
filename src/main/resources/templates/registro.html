@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registro de alumnos | telosabes2026</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="pagina-auth">
+
+<main class="caja-auth">
+    <h1>telosabes2026</h1>
+    <h2>Registro de alumnos</h2>
+    <p class="ayuda">Al registrarte se te asigna el rol de <strong>alumno</strong>.
+        Solo el administrador puede convertirte en profesor.</p>
+
+    <form th:action="@{/registro}" th:object="${registroForm}" method="post">
+
+        <label for="nombre">Nombre y apellidos</label>
+        <input type="text" id="nombre" th:field="*{nombre}" maxlength="60"
+               th:classappend="${#fields.hasErrors('nombre')} ? 'con-error'">
+        <p class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">Error</p>
+
+        <label for="email">Correo electronico</label>
+        <input type="text" id="email" th:field="*{email}" maxlength="120"
+               th:classappend="${#fields.hasErrors('email')} ? 'con-error'">
+        <p class="error-campo" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Error</p>
+
+        <label for="clave">Contraseña</label>
+        <input type="password" id="clave" th:field="*{clave}"
+               th:classappend="${#fields.hasErrors('clave')} ? 'con-error'">
+        <p class="error-campo" th:if="${#fields.hasErrors('clave')}" th:errors="*{clave}">Error</p>
+
+        <label for="claveRepetida">Repite la contraseña</label>
+        <input type="password" id="claveRepetida" th:field="*{claveRepetida}"
+               th:classappend="${#fields.hasErrors('claveRepetida')} ? 'con-error'">
+        <p class="error-campo" th:if="${#fields.hasErrors('claveRepetida')}" th:errors="*{claveRepetida}">Error</p>
+
+        <button class="boton" type="submit">Crear cuenta</button>
+    </form>
+
+    <p class="pie-auth">¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesion</a></p>
+</main>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head th:replace="~{fragments/layout :: head('Inicio')}"></head>
 <body>
 
@@ -7,7 +8,7 @@
 
 <main class="contenedor">
     <h2>Aplicacion en marcha</h2>
-    <p>Spring Boot + Thymeleaf + MariaDB funcionando correctamente.</p>
+    <p>Spring Boot + Thymeleaf + MariaDB + Spring Security funcionando correctamente.</p>
 
     <div th:replace="~{fragments/layout :: avisos}"></div>
 
@@ -24,15 +25,45 @@
             <h3>MariaDB + JPA</h3>
             <p>Persistencia con Spring Data JPA y Hibernate.</p>
         </div>
+        <div class="tarjeta">
+            <h3>Spring Security</h3>
+            <p>Roles de administrador, profesor y alumno con contraseñas cifradas (BCrypt).</p>
+        </div>
     </div>
 
-    <p class="acciones">
-        <a class="boton" th:href="@{/notas}">Ir al ejemplo CRUD de notas</a>
-    </p>
+    <!-- Contenido segun el rol del usuario conectado -->
+    <section class="panel" sec:authorize="isAuthenticated()">
+        <h3>Tu sesion</h3>
+        <p th:if="${usuarioActual}">Conectado como
+            <strong th:text="${usuarioActual.nombre}">Nombre</strong>
+            (<span th:text="${usuarioActual.rol.etiqueta}">Rol</span>).
+        </p>
+        <ul>
+            <li sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/admin/usuarios}">Gestionar usuarios</a>: convertir alumnos en profesores.
+            </li>
+            <li sec:authorize="hasAnyRole('PROFESOR','ADMIN')">
+                <a th:href="@{/profesor}">Zona de profesor</a>: ver el listado de alumnos.
+            </li>
+            <li sec:authorize="hasRole('ALUMNO')">
+                Tu cuenta es de alumno. Cuando un administrador te asigne el rol de profesor
+                apareceran nuevas opciones.
+            </li>
+            <li><a th:href="@{/notas}">Ejemplo CRUD de notas</a>.</li>
+        </ul>
+    </section>
+
+    <section class="panel" sec:authorize="!isAuthenticated()">
+        <h3>Acceso</h3>
+        <p>
+            <a th:href="@{/login}">Inicia sesion</a> o, si eres alumno,
+            <a th:href="@{/registro}">registrate aqui</a>.
+        </p>
+    </section>
 </main>
 
 <footer class="pie">
-    <p>telosabes2026 &middot; Spring Boot 4 + Thymeleaf + MariaDB</p>
+    <p>telosabes2026 &middot; Spring Boot 4 + Thymeleaf + MariaDB + Spring Security</p>
 </footer>
 
 </body>

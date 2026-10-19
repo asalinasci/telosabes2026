@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Usuarios')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: cabecera}"></header>
+
+<main class="contenedor">
+    <h2>Gestion de usuarios</h2>
+    <p class="ayuda">Zona exclusiva del administrador. Los datos del administrador
+        no se muestran ni se pueden modificar desde la aplicacion.</p>
+
+    <div th:replace="~{fragments/layout :: avisos}"></div>
+
+    <div class="tarjetas">
+        <div class="tarjeta">
+            <h3 th:text="${totalAlumnos}">0</h3>
+            <p>Alumnos registrados</p>
+        </div>
+        <div class="tarjeta">
+            <h3 th:text="${totalProfesores}">0</h3>
+            <p>Profesores</p>
+        </div>
+    </div>
+
+    <section class="panel">
+        <h3>Alumnos y profesores</h3>
+
+        <p th:if="${#lists.isEmpty(usuarios)}">
+            Todavia no hay usuarios registrados. El formulario publico de registro
+            esta en <a th:href="@{/registro}">/registro</a>.
+        </p>
+
+        <table th:unless="${#lists.isEmpty(usuarios)}">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Registro</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="u : ${usuarios}">
+                <td th:text="${u.id}">1</td>
+                <td th:text="${u.nombre}">Nombre</td>
+                <td th:text="${u.email}">correo@ejemplo.com</td>
+                <td th:text="${u.rol.etiqueta}">Alumno</td>
+                <td th:text="${#temporals.format(u.fechaRegistro, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</td>
+                <td>
+                    <!-- Solo los alumnos se pueden convertir en profesores -->
+                    <form th:if="${u.rol.name() == 'ALUMNO'}"
+                          th:action="@{/admin/usuarios/{id}/promover(id=${u.id})}" method="post"
+                          onsubmit="return confirm('¿Convertir a este alumno en profesor?');">
+                        <button class="boton" type="submit">Hacer profesor</button>
+                    </form>
+                    <span th:if="${u.rol.name() == 'PROFESOR'}" class="ayuda">Ya es profesor</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer class="pie">
+    <p>telosabes2026 &middot; Spring Boot 4 + Thymeleaf + MariaDB + Spring Security</p>
+</footer>
+
+</body>
+</html>

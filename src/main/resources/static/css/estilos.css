@@ -166,3 +166,78 @@ th {
     color: #6b7280;
     border-top: 1px solid var(--borde);
 }
+
+/* ---------- Usuario de la cabecera ---------- */
+.sesion {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    color: #eaf3ee;
+    font-size: .9rem;
+}
+
+.sesion form { margin: 0; }
+
+.nombre-usuario { font-weight: 600; }
+
+.etiqueta-rol {
+    background: rgba(255, 255, 255, .18);
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 999px;
+    padding: .15rem .6rem;
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.boton.pequeno {
+    margin: 0;
+    padding: .35rem .7rem;
+    font-size: .82rem;
+    background: rgba(255, 255, 255, .18);
+    border: 1px solid rgba(255, 255, 255, .35);
+}
+
+/* ---------- Paginas de acceso (login y registro) ---------- */
+.pagina-auth {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 3rem 1rem;
+    background: linear-gradient(160deg, #2f6f4e 0%, #1f4b35 100%);
+}
+
+.caja-auth {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .22);
+}
+
+.caja-auth h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--primario);
+    letter-spacing: .5px;
+}
+
+.caja-auth h2 {
+    margin: .25rem 0 1rem;
+    font-size: 1.4rem;
+}
+
+.caja-auth .boton { width: 100%; text-align: center; }
+
+.pie-auth {
+    margin: 1.25rem 0 0;
+    font-size: .88rem;
+    color: #5b6472;
+    text-align: center;
+}
+
+/* ---------- Listas dentro de paneles ---------- */
+.panel ul { margin: .6rem 0 0; padding-left: 1.2rem; }
+.panel ul li { margin-bottom: .35rem; }
