@@ -129,7 +129,10 @@ telosabes2026/
 ├── deploy/                           # publicar en un servidor Ubuntu
 │   ├── instalar.sh                   # instala Java, MariaDB y Nginx, y crea el servicio
 │   ├── crear-admin.sh                # crea/cambia el administrador (hash BCrypt)
+│   ├── copia.sh                      # volcado y restauración de la base de datos
 │   ├── telosabes2026.service         # unidad de systemd
+│   ├── telosabes2026-copia.service   # unidad de copia (una sola vez)
+│   ├── telosabes2026-copia.timer     # ejecuta la copia una vez al día
 │   └── nginx-telosabes2026.conf      # Nginx como reverse proxy
 ├── src/main/java/com/telosabes/telosabes2026/
 │   ├── Telosabes2026Application.java # clase principal
@@ -308,6 +311,45 @@ mvnw.cmd clean package -DskipTests
 scp target/telosabes2026-0.0.1-SNAPSHOT.jar root@TU_IP:/root/despliegue/telosabes2026.jar
 ssh root@TU_IP "cd /root/despliegue && ./instalar.sh /root/despliegue/telosabes2026.jar"
 ```
+
+### Copias de seguridad de la base de datos
+
+Los datos reales (usuarios, notas, ciclos) **no están en el repositorio**: viven en MariaDB,
+dentro de la VPS. `deploy/instalar.sh` activa un temporizador que hace un volcado diario en
+`/var/backups/telosabes2026/` y conserva los últimos 30 días.
+
+```bash
+/opt/telosabes2026/copia.sh volcado            # copia manual, ahora mismo
+/opt/telosabes2026/copia.sh listar             # ver las copias que hay
+/opt/telosabes2026/copia.sh restaurar /var/backups/telosabes2026/telosabes2026-2026-10-20_031500.sql.gz
+
+systemctl list-timers telosabes2026-copia.timer   # cuándo es la próxima copia
+```
+
+> ⚠️ Las copias se quedan en la misma VPS: si la VPS muere, se pierden con ella.
+> Descárgalas de vez en cuando a tu ordenador (o llévalas a una nube):
+>
+> ```powershell
+> scp root@TU_IP:/var/backups/telosabes2026/*.sql.gz C:\Copia-telosabes\
+> ```
+
+### Mudar la aplicación a otra VPS más potente
+
+1. **VPS nueva**: clave SSH, `deploy/` y el JAR, y ejecutar `./instalar.sh` igual que en los
+   pasos anteriores. Al no haber cambiado todavía el registro DNS, la web vieja sigue en pie
+   y puedes probar la nueva por su IP sin molestar a nadie.
+2. **Copiar los datos**: en la vieja `copia.sh volcado`, bajar el `.sql.gz` con `scp`, subirlo
+   a la nueva y allí `copia.sh restaurar <fichero>`. Los usuarios y sus contraseñas llegan
+   incluidos (viajan cifrados con BCrypt), así que nadie tiene que volver a registrarse.
+   Si usas la misma `DB_PASSWORD` en ambas, no hay que tocar nada más.
+3. **Bajar el TTL** del registro A (a 300) un par de horas antes.
+4. **Cambiar el registro A** a la IP nueva (Hostytec → Zona DNS).
+5. **Certificado**: `certbot --nginx -d midominio.com -d www.midominio.com --redirect`,
+   y volver a instalar fail2ban y el acceso SSH solo por clave en la nueva.
+6. Dejar la VPS vieja unos días por si acaso y luego cancelarla.
+
+Para los usuarios lo único que se nota es un salto de unos minutos (propagación del DNS)
+y el tener que volver a iniciar sesión.
 
 ### Notas de seguridad
 

@@ -1,0 +1,6 @@
+[Unit]
+Description=Volcado de la base de datos de telosabes2026
+
+[Service]
+Type=oneshot
+ExecStart=/opt/telosabes2026/copia.sh volcado

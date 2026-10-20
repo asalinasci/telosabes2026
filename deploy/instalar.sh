@@ -3,7 +3,7 @@
 # Publica telosabes2026 en un servidor Ubuntu con Nginx.
 #
 # Uso (en el servidor, como root):
-#     DB_PASSWORD='la-clave-de-la-base-de-datos' ./instalar.sh /tmp/telosabes2026.jar
+#     DB_PASSWORD='la-clave-de-la-base-de-datos' ./instalar.sh /ruta/al/telosabes2026.jar
 #
 # Se puede ejecutar varias veces: instala lo que falte y actualiza la
 # aplicacion, pero NO borra la base de datos.
@@ -34,7 +34,7 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 
 # ------------------------------------------------------------------
-titulo "1/7 Paquetes del sistema"
+titulo "1/8 Paquetes del sistema"
 # ------------------------------------------------------------------
 apt-get update -qq
 
@@ -60,7 +60,7 @@ systemctl enable --now nginx
 echo "MariaDB: $(mariadb --version)"
 
 # ------------------------------------------------------------------
-titulo "2/7 Base de datos y su usuario"
+titulo "2/8 Base de datos y su usuario"
 # ------------------------------------------------------------------
 # En Ubuntu, root de MariaDB entra por el socket (sin contrasena).
 mariadb --protocol=socket -uroot <<SQL
@@ -76,7 +76,7 @@ SQL
 echo "Base de datos '$DB_NOMBRE' y usuario '$DB_USUARIO' listos."
 
 # ------------------------------------------------------------------
-titulo "3/7 Usuario y carpeta de la aplicacion"
+titulo "3/8 Usuario y carpeta de la aplicacion"
 # ------------------------------------------------------------------
 if ! id "$APP_USUARIO" >/dev/null 2>&1; then
     useradd --system --home-dir "$APP_DIR" --shell /usr/sbin/nologin "$APP_USUARIO"
@@ -85,7 +85,7 @@ fi
 mkdir -p "$APP_DIR"
 
 # ------------------------------------------------------------------
-titulo "4/7 Ficheros de la aplicacion"
+titulo "4/8 Ficheros de la aplicacion"
 # ------------------------------------------------------------------
 install -o "$APP_USUARIO" -g "$APP_USUARIO" -m 0644 "$JAR_ORIGEN" "$JAR_DESTINO"
 echo "Aplicacion copiada en $JAR_DESTINO"
@@ -97,7 +97,7 @@ chmod 600 "$ENV_FILE"
 echo "Credenciales guardadas en $ENV_FILE (permisos 600)"
 
 # ------------------------------------------------------------------
-titulo "5/7 Servicio systemd"
+titulo "5/8 Servicio systemd"
 # ------------------------------------------------------------------
 install -o root -g root -m 0644 "$AQUI/telosabes2026.service" "/etc/systemd/system/$SERVICIO.service"
 systemctl daemon-reload
@@ -106,7 +106,18 @@ systemctl restart "$SERVICIO"
 echo "Servicio $SERVICIO activado y arrancado."
 
 # ------------------------------------------------------------------
-titulo "6/7 Nginx como reverse proxy"
+titulo "6/8 Copias de seguridad de la base de datos"
+# ------------------------------------------------------------------
+install -o root -g root -m 0755 "$AQUI/copia.sh" "$APP_DIR/copia.sh"
+install -o root -g root -m 0644 "$AQUI/telosabes2026-copia.service" "/etc/systemd/system/$SERVICIO-copia.service"
+install -o root -g root -m 0644 "$AQUI/telosabes2026-copia.timer" "/etc/systemd/system/$SERVICIO-copia.timer"
+systemctl daemon-reload
+systemctl enable --now "$SERVICIO-copia.timer" >/dev/null 2>&1
+echo "Volcado diario activado en /var/backups/telosabes2026 (ultimos 30 dias)"
+systemctl list-timers "$SERVICIO-copia.timer" --no-pager | sed -n '1,3p'
+
+# ------------------------------------------------------------------
+titulo "7/8 Nginx como reverse proxy"
 # ------------------------------------------------------------------
 install -o root -g root -m 0644 "$AQUI/nginx-telosabes2026.conf" "/etc/nginx/sites-available/$APP_NOMBRE"
 ln -sfn "/etc/nginx/sites-available/$APP_NOMBRE" "/etc/nginx/sites-enabled/$APP_NOMBRE"
@@ -116,7 +127,7 @@ systemctl reload nginx
 echo "Nginx recargado (puerto 80 -> 127.0.0.1:$PUERTO_APP)."
 
 # ------------------------------------------------------------------
-titulo "7/7 Cortafuegos"
+titulo "8/8 Cortafuegos"
 # ------------------------------------------------------------------
 ufw allow OpenSSH >/dev/null
 ufw allow 80/tcp >/dev/null
@@ -147,5 +158,6 @@ fi
 echo
 echo "Aplicacion publicada."
 echo "  Anade el administrador con: $AQUI/crear-admin.sh correo@ejemplo.com 'ClaveSecreta1!'"
+echo "  Copia de seguridad manual: $APP_DIR/copia.sh volcado"
 echo "  Estado del servicio:        systemctl status $SERVICIO"
 echo "  Log en vivo:                journalctl -u $SERVICIO -f"

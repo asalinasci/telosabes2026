@@ -1,0 +1,12 @@
+[Unit]
+Description=Copia diaria de la base de datos de telosabes2026
+
+[Timer]
+# Una vez al dia, a una hora cualquiera de madrugada (dentro de la hora siguiente)
+OnCalendar=daily
+RandomizedDelaySec=1h
+# Si el servidor estaba apagado a esa hora, la copia se hace al arrancar
+Persistent=true
+
+[Install]
+WantedBy=timers.target
