@@ -2,6 +2,8 @@ package com.telosabes.telosabes2026.modulo;
 
 import com.telosabes.telosabes2026.ciclo.Ciclo;
 import com.telosabes.telosabes2026.ciclo.CicloRepository;
+import com.telosabes.telosabes2026.criterio.Criterio;
+import com.telosabes.telosabes2026.criterio.CriterioRepository;
 import com.telosabes.telosabes2026.ra.RA;
 import com.telosabes.telosabes2026.ra.RaRepository;
 import org.springframework.stereotype.Controller;
@@ -27,12 +29,14 @@ public class ModuloController {
     private final CicloRepository cicloRepository;
     private final ModuloRepository moduloRepository;
     private final RaRepository raRepository;
+    private final CriterioRepository criterioRepository;
 
     public ModuloController(CicloRepository cicloRepository, ModuloRepository moduloRepository,
-                            RaRepository raRepository) {
+                            RaRepository raRepository, CriterioRepository criterioRepository) {
         this.cicloRepository = cicloRepository;
         this.moduloRepository = moduloRepository;
         this.raRepository = raRepository;
+        this.criterioRepository = criterioRepository;
     }
 
     /** Listado de ciclos con sus modulos, agrupados por ciclo. */
@@ -53,9 +57,17 @@ public class ModuloController {
                     .add(ra);
         }
 
+        // Criterios de evaluacion de cada resultado de aprendizaje
+        Map<Long, List<Criterio>> criteriosPorRa = new LinkedHashMap<>();
+        for (Criterio criterio : criterioRepository.findAllByOrderByRaIdAscOrdenAsc()) {
+            criteriosPorRa.computeIfAbsent(criterio.getRa().getId(), clave -> new ArrayList<>())
+                    .add(criterio);
+        }
+
         model.addAttribute("ciclos", ciclos);
         model.addAttribute("modulosPorCiclo", modulosPorCiclo);
         model.addAttribute("raPorModulo", raPorModulo);
+        model.addAttribute("criteriosPorRa", criteriosPorRa);
         return "modulos/lista";
     }
 }

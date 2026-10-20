@@ -361,6 +361,63 @@ th {
     margin-right: .35rem;
 }
 
+/* ---------- Criterios de evaluacion ---------- */.lista-criterios {
+    margin: .2rem 0 .3rem;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: .15rem;
+    font-size: .8rem;
+}
+
+.lista-criterios li {
+    line-height: 1.4;
+    color: #4a5361;
+}
+
+.letra-criterio {
+    font-family: Consolas, "Courier New", monospace;
+    font-weight: 700;
+    color: #7a8494;
+    margin-right: .3rem;
+}
+
+/* ---------- Consulta de temario (/modulos/estudio) ---------- */
+.selector-ciclo {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+
+.selector-ciclo label {
+    margin: 0;
+}
+
+.selector-ciclo select {
+    max-width: 22rem;
+}
+
+.ficha-modulo {
+    border-left: 3px solid #dfe4ec;
+    padding: .2rem 0 .2rem .9rem;
+    margin: 0 0 1.1rem;
+}
+
+.titulo-modulo {
+    margin: 0 0 .15rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: baseline;
+    gap: .5rem;
+}
+
+.titulo-modulo .codigo-modulo {
+    font-size: .9rem;
+}
+
+.ficha-modulo .ra-detalle {
+    margin-top: .45rem;
+}
+
 td.numero, th.numero {
     text-align: right;
     white-space: nowrap;

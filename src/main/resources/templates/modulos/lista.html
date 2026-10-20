@@ -11,8 +11,14 @@
         Modulos profesionales de los ciclos de la Region de Murcia, con el codigo oficial
         del Real Decreto, las horas semanales y el reparto entre las horas que se imparten
         en el centro y las de la fase de formacion en la empresa.
-        Desplegando cada modulo se muestran sus resultados de aprendizaje oficiales.
+        Desplegando cada modulo se muestran sus resultados de aprendizaje oficiales con
+        los criterios de evaluacion de cada uno.
         Cada ciclo tiene 2000 horas repartidas en dos cursos de 30 horas semanales.
+    </p>
+
+    <p class="ayuda" th:if="${usuarioActual}">
+        Para consultarlos con mas comodidad, en una pantalla solo de temario,
+        abre <a th:href="@{/modulos/estudio}">Modulos</a>.
     </p>
 
     <div th:replace="~{fragments/layout :: avisos}"></div>
@@ -51,17 +57,7 @@
                     <td><span class="codigo-modulo" th:text="${m.codigo} ?: '--'">0485</span></td>
                     <td>
                         <span th:text="${m.nombre}">Programacion</span>
-                        <details class="ra-detalle" th:if="${raPorModulo.containsKey(m.id)}">
-                            <summary th:text="|Resultados de aprendizaje (${#lists.size(raPorModulo.get(m.id))})|">
-                                Resultados de aprendizaje (9)
-                            </summary>
-                            <ol class="lista-ra">
-                                <li th:each="ra : ${raPorModulo.get(m.id)}">
-                                    <span class="codigo-ra" th:text="${ra.codigo}">RA1</span>
-                                    <span th:text="${ra.descripcion}">Texto del resultado de aprendizaje.</span>
-                                </li>
-                            </ol>
-                        </details>
+                        <div th:replace="~{fragments/layout :: detalleTemario(${m}, ${raPorModulo}, ${criteriosPorRa})}"></div>
                     </td>
                     <td class="numero" th:text="${m.horasSemanales}">7</td>
                     <td class="numero" th:text="${m.horasCentro}">195</td>

@@ -24,4 +24,12 @@ public interface RaRepository extends JpaRepository<RA, Long> {
 
     /** Cantidad de RA de un módulo (los módulos optativos no tienen). */
     long countByModuloId(Long moduloId);
+
+    /** Todos los RA con su módulo, para recorrerlos sin cargas perezosas. */
+    @EntityGraph(attributePaths = "modulo")
+    List<RA> findAllByOrderByIdAsc();
+
+    /** RA de un módulo junto con el módulo, para pruebas y sembradores. */
+    @EntityGraph(attributePaths = "modulo")
+    List<RA> findByModuloIdOrderByIdAsc(Long moduloId);
 }

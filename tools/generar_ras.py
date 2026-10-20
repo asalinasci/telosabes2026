@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
-Regenera src/main/resources/ras.txt con los resultados de aprendizaje (RA)
-oficiales de los módulos profesionales, extrayéndolos del Boletín Oficial del
-Estado. El fichero lo lee el sembrador RasIniciales al arrancar la aplicación.
+Regenera src/main/resources/ras.txt y src/main/resources/criterios.txt con los
+resultados de aprendizaje (RA) y sus criterios de evaluación oficiales de los
+módulos profesionales, extrayéndolos del Boletín Oficial del Estado. Los dos
+ficheros los leen los sembradores RasIniciales y CriteriosIniciales al arrancar
+la aplicación.
 
 Uso:
     python tools/generar_ras.py
@@ -20,8 +22,12 @@ El mismo código de módulo puede tener redacciones ligeramente distintas según
 el Real Decreto del título (por ejemplo el 0373), así que cada ciclo se toma de
 la fuente de su propio título y los transversales se comparten.
 
-Cada línea del fichero es:  GRUPO|CODIGO_MODULO|ORDEN|TEXTO
+Cada línea de ras.txt es:        GRUPO|CODIGO_MODULO|ORDEN|TEXTO
+Cada línea de criterios.txt es:  GRUPO|CODIGO_MODULO|ORDEN_RA|ORDEN|TEXTO
 El grupo indica a qué siglas de ciclo se aplica la línea (ver RasIniciales).
+
+Los textos se guardan tal cual (sin cortar): el criterio más largo ronda los
+6000 caracteres, así que las columnas de la base de datos admiten 8000.
 """
 
 import html
@@ -30,7 +36,9 @@ import sys
 import urllib.request
 from pathlib import Path
 
-SALIDA = Path(__file__).resolve().parents[1] / "src" / "main" / "resources" / "ras.txt"
+CARPETA = Path(__file__).resolve().parents[1] / "src" / "main" / "resources"
+SALIDA_RA = CARPETA / "ras.txt"
+SALIDA_CRITERIOS = CARPETA / "criterios.txt"
 
 FUENTES = {
     "DAM": "https://www.boe.es/buscar/act.php?id=BOE-A-2010-8067",
@@ -60,6 +68,10 @@ COBERTURA = [
 ESPERADO = {"DAM": 69, "DAW": 68, "ASIR": 72, "SMR": 52,
             "TRANS": 16, "SUPER": 11, "MEDIO": 15}
 
+# Nº de criterios de evaluación de cada grupo (guarda de regresión del parseo).
+ESPERADO_CRITERIOS = {"DAM": 539, "DAW": 530, "ASIR": 600, "SMR": 430,
+                      "TRANS": 108, "SUPER": 88, "MEDIO": 117}
+
 
 def descargar(url: str) -> str:
     peticion = urllib.request.Request(
@@ -82,8 +94,31 @@ def titulo_boe(documento: str) -> str:
     return re.sub(r"\s+", " ", html.unescape(coincidencia.group(1))).strip()
 
 
+def partir_criterios(region: str) -> list:
+    """Corta una región en los criterios a), b), c)... de la tabla oficial.
+
+    Solo acepta letras contiguas desde la a): una letra repetida dentro de un
+    texto se salta y un salto de letra termina la lista. Así la lista se corta
+    sola en el primer texto que viene detrás (el siguiente RA u otro anexo).
+    """
+    marcas = list(re.finditer(r"(?:^|\s)([a-z])\)\s*", region))
+    criterios = []
+    esperada = 0  # índice en el alfabeto de la próxima letra: 0 = «a)»
+    for i, marca in enumerate(marcas):
+        indice = ord(marca.group(1)) - ord("a")
+        if indice != esperada:
+            if indice < esperada:
+                continue  # letra suelta repetida dentro de un texto
+            break  # salto de letra: la lista oficial ha terminado
+        fin = marcas[i + 1].start() if i + 1 < len(marcas) else len(region)
+        texto = region[marca.start():fin].strip()
+        criterios.append(re.sub(r"^[a-z]\)\s*", "", texto).strip())
+        esperada = indice + 1
+    return criterios
+
+
 def extraer_modulos(texto: str) -> dict:
-    """Devuelve {código: [RA1, RA2, ...]} con los RA de cada módulo del anexo."""
+    """Devuelve {código: [(RA1, [sus criterios]), (RA2, [...]), ...]}."""
     marcas = [m.start() for m in re.finditer(r"M[oó]dulo [Pp]rofesional:", texto)]
     modulos = {}
 
@@ -105,10 +140,10 @@ def extraer_modulos(texto: str) -> dict:
         resto = re.sub(r"Resultados de aprendizaje y criterios de evaluaci[oó]n\s*[:.]?\s*",
                        "", resto, count=1, flags=re.I)
 
-        rae = []
+        parejas = []
         partes = resto.split("Criterios de evaluación")
         if len(partes) > 1:
-            # Estructura: "N. RA... Criterios de evaluación: a) ... b) ..."
+            # Estructura: "N. RA... Criterios de evaluación: a) ... b) ... N+1. RA..."
             for k, parte in enumerate(partes[:-1]):
                 numero = k + 1
                 marcas_n = list(re.finditer(r"(?:^|\s)%d\.\s*" % numero, parte))
@@ -116,8 +151,15 @@ def extraer_modulos(texto: str) -> dict:
                     continue
                 texto_ra = re.sub(r"^\s*%d\.\s*" % numero, "",
                                   parte[marcas_n[-1].start():], count=1).strip()
-                if len(texto_ra) >= 15:
-                    rae.append(texto_ra)
+                if len(texto_ra) < 15:
+                    continue
+                # Los criterios de este RA están en la parte siguiente: desde
+                # el principio hasta la marca del RA que viene detrás.
+                region = partes[k + 1]
+                corte = re.search(r"(?:^|\s)%d\.\s*" % (numero + 1), region)
+                if corte:
+                    region = region[:corte.start()]
+                parejas.append((texto_ra, partir_criterios(region)))
         else:
             # Estructura sin etiqueta: "N. RA... a) criterio ... N+1. RA..."
             puntos = [(int(m.group(1)), m.start()) for m in
@@ -131,15 +173,19 @@ def extraer_modulos(texto: str) -> dict:
                 fin_ra = siguiente[1] if siguiente else len(resto)
                 criterio = re.search(r"(?:^|\s)[a-z]\)\s", resto[posicion_ra:fin_ra])
                 if criterio:
-                    fin_ra = posicion_ra + criterio.start()
-                texto_ra = re.sub(r"^\s*%d\.\s*" % numero, "",
-                                  resto[posicion_ra:fin_ra], count=1).strip()
-                if len(texto_ra) >= 15:
-                    rae.append(texto_ra)
-                    esperado += 1
+                    region = resto[posicion_ra + criterio.start():fin_ra]
+                    texto_ra = resto[posicion_ra:posicion_ra + criterio.start()]
+                else:
+                    region = ""
+                    texto_ra = resto[posicion_ra:fin_ra]
+                texto_ra = re.sub(r"^\s*%d\.\s*" % numero, "", texto_ra, count=1).strip()
+                if len(texto_ra) < 15:
+                    continue
+                parejas.append((texto_ra, partir_criterios(region)))
+                esperado += 1
 
-        if rae:
-            modulos[codigo.group(1)] = rae
+        if parejas:
+            modulos[codigo.group(1)] = parejas
 
     return modulos
 
@@ -154,31 +200,60 @@ def main() -> int:
     extraidos = {clave: extraer_modulos(a_texto(documento))
                  for clave, documento in documentos.items()}
 
-    lineas = []
+    lineas_ra = []
+    lineas_criterios = []
     fallos = []
-    resumen = {}
+    sin_criterios = []
+    resumen_ra = {}
+    resumen_criterios = {}
+
     for grupo, fuente, codigos in COBERTURA:
         for codigo in codigos:
-            rae = extraidos[fuente].get(codigo)
-            if not rae:
+            parejas = extraidos[fuente].get(codigo)
+            if not parejas:
                 fallos.append(f"{fuente} no tiene RA del módulo {codigo}")
                 continue
-            resumen.setdefault(grupo, 0)
-            resumen[grupo] += len(rae)
-            for orden, texto in enumerate(rae, start=1):
-                if "|" in texto:
+            resumen_ra.setdefault(grupo, 0)
+            resumen_criterios.setdefault(grupo, 0)
+            for orden, (texto_ra, criterios) in enumerate(parejas, start=1):
+                if "|" in texto_ra:
                     fallos.append(f"el RA {orden} de {codigo} contiene «|»")
                     continue
-                lineas.append(f"{grupo}|{codigo}|{orden}|{texto}")
+                if len(texto_ra) > 8000:
+                    fallos.append(f"el RA {orden} de {codigo} tiene {len(texto_ra)} caracteres")
+                lineas_ra.append(f"{grupo}|{codigo}|{orden}|{texto_ra}")
+                resumen_ra[grupo] += 1
+                if not criterios:
+                    sin_criterios.append(f"{grupo} {codigo} RA{orden}")
+                for orden_criterio, texto_criterio in enumerate(criterios, start=1):
+                    if "|" in texto_criterio:
+                        fallos.append(f"el criterio {orden_criterio} de {codigo} RA{orden} "
+                                      f"contiene «|»")
+                        continue
+                    if len(texto_criterio) > 8000:
+                        fallos.append(f"el criterio {orden_criterio} de {codigo} RA{orden} "
+                                      f"tiene {len(texto_criterio)} caracteres")
+                    lineas_criterios.append(
+                        f"{grupo}|{codigo}|{orden}|{orden_criterio}|{texto_criterio}")
+                    resumen_criterios[grupo] += 1
 
-    print("\nRA por grupo:")
+    print("\nPor grupo          RA           criterios")
     for grupo in ["DAM", "DAW", "ASIR", "SMR", "TRANS", "SUPER", "MEDIO"]:
-        hay = resumen.get(grupo, 0)
-        esperado = ESPERADO[grupo]
-        marca = "ok" if hay == esperado else f"¡ESPERABA {esperado}!"
-        print(f"  {grupo:6s} {hay:>3}  {marca}")
-        if hay != esperado:
-            fallos.append(f"el grupo {grupo} tiene {hay} RA y se esperaban {esperado}")
+        ra = resumen_ra.get(grupo, 0)
+        criterios = resumen_criterios.get(grupo, 0)
+        marca_ra = "ok" if ra == ESPERADO[grupo] else f"¡ESPERABA {ESPERADO[grupo]}!"
+        marca_cr = ("ok" if criterios == ESPERADO_CRITERIOS.get(grupo)
+                    else f"¡ESPERABA {ESPERADO_CRITERIOS.get(grupo)}!")
+        print(f"  {grupo:6s} {ra:>5} {marca_ra:>16} {criterios:>6} {marca_cr:>16}")
+        if ra != ESPERADO[grupo]:
+            fallos.append(f"el grupo {grupo} tiene {ra} RA y se esperaban {ESPERADO[grupo]}")
+        if criterios != ESPERADO_CRITERIOS.get(grupo):
+            fallos.append(f"el grupo {grupo} tiene {criterios} criterios y se esperaban "
+                          f"{ESPERADO_CRITERIOS.get(grupo)}")
+
+    if sin_criterios:
+        fallos.append(f"hay {len(sin_criterios)} RA sin criterios: "
+                      + ", ".join(sin_criterios[:10]))
 
     if fallos:
         print("\nFALLOS:")
@@ -186,7 +261,7 @@ def main() -> int:
             print(f"  - {fallo}")
         return 1
 
-    cabecera = [
+    cabecera_ra = [
         "# Resultados de aprendizaje oficiales de los módulos profesionales.",
         "# Fichero generado por tools/generar_ras.py a partir del BOE; no editar a mano.",
         "# Formato de cada línea: GRUPO|CODIGO_MODULO|ORDEN|TEXTO",
@@ -200,8 +275,19 @@ def main() -> int:
         "#   MEDIO Real Decreto 659/2023 y 499/2024 -> SMR (1664, 0156 y 1713)",
         "",
     ]
-    SALIDA.write_text("\n".join(cabecera + lineas) + "\n", encoding="utf-8")
-    print(f"\nEscrito {SALIDA} con {len(lineas)} RA.")
+    cabecera_criterios = [
+        "# Criterios de evaluación oficiales de cada resultado de aprendizaje.",
+        "# Fichero generado por tools/generar_ras.py a partir del BOE; no editar a mano.",
+        "# Formato de cada línea: GRUPO|CODIGO_MODULO|ORDEN_RA|ORDEN|TEXTO",
+        "# El ORDEN es la letra de la tabla oficial: 1 = a), 2 = b), 3 = c)...",
+        "# Los grupos son los mismos que en ras.txt (ver RasIniciales).",
+        "",
+    ]
+    SALIDA_RA.write_text("\n".join(cabecera_ra + lineas_ra) + "\n", encoding="utf-8")
+    SALIDA_CRITERIOS.write_text("\n".join(cabecera_criterios + lineas_criterios) + "\n",
+                                encoding="utf-8")
+    print(f"\nEscrito {SALIDA_RA.name} con {len(lineas_ra)} RA y "
+          f"{SALIDA_CRITERIOS.name} con {len(lineas_criterios)} criterios.")
     return 0
 
 

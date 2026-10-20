@@ -2,6 +2,7 @@ package com.telosabes.telosabes2026.ra;
 
 import com.telosabes.telosabes2026.ciclo.Ciclo;
 import com.telosabes.telosabes2026.ciclo.CicloRepository;
+import com.telosabes.telosabes2026.criterio.CriterioRepository;
 import com.telosabes.telosabes2026.modulo.Modulo;
 import com.telosabes.telosabes2026.modulo.ModuloRepository;
 import org.slf4j.Logger;
@@ -72,13 +73,16 @@ public class RasIniciales implements ApplicationRunner {
     private final CicloRepository cicloRepository;
     private final ModuloRepository moduloRepository;
     private final RaRepository raRepository;
+    private final CriterioRepository criterioRepository;
 
     public RasIniciales(CicloRepository cicloRepository,
                         ModuloRepository moduloRepository,
-                        RaRepository raRepository) {
+                        RaRepository raRepository,
+                        CriterioRepository criterioRepository) {
         this.cicloRepository = cicloRepository;
         this.moduloRepository = moduloRepository;
         this.raRepository = raRepository;
+        this.criterioRepository = criterioRepository;
     }
 
     @Override
@@ -152,6 +156,9 @@ public class RasIniciales implements ApplicationRunner {
 
                 for (RA ra : existentes.values()) {
                     if (!deseadas.containsKey(ra.getOrden())) {
+                        // Los criterios de evaluación van antes: cada criterio
+                        // apunta a su RA con una clave ajena.
+                        criterioRepository.deleteAll(criterioRepository.findByRaIdOrderByOrdenAsc(ra.getId()));
                         raRepository.delete(ra);
                         borrados++;
                     }
