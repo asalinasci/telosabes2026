@@ -1,0 +1,315 @@
+# Resultados de aprendizaje oficiales de los módulos profesionales.
+# Fichero generado por tools/generar_ras.py a partir del BOE; no editar a mano.
+# Formato de cada línea: GRUPO|CODIGO_MODULO|ORDEN|TEXTO
+# Grupos (a qué siglas se aplica cada línea, ver RasIniciales):
+#   DAM   Real Decreto 450/2010      -> ciclo DAM
+#   DAW   Real Decreto 686/2010      -> ciclo DAW
+#   ASIR  Real Decreto 1629/2009     -> ciclo ASIR
+#   SMR   Real Decreto 1691/2007     -> ciclo SMR
+#   TRANS Real Decreto 659/2023      -> DAM, DAW, ASIR y SMR (1709, 1710, 1708)
+#   SUPER Real Decreto 659/2023      -> DAM, DAW y ASIR (1665, 0179)
+#   MEDIO Real Decreto 659/2023 y 499/2024 -> SMR (1664, 0156 y 1713)
+
+DAM|0373|1|Reconoce las características de lenguajes de marcas analizando e interpretando fragmentos de código.
+DAM|0373|2|Utiliza lenguajes de marcas para la transmisión de información a través de la web analizando la estructura de los documentos e identificando sus elementos.
+DAM|0373|3|Genera canales de contenidos analizando y utilizando tecnologías de sindicación.
+DAM|0373|4|Establece mecanismos de validación para documentos XML utilizando métodos para definir su sintaxis y estructura.
+DAM|0373|5|Realiza conversiones sobre documentos XML utilizando técnicas y herramientas de procesamiento.
+DAM|0373|6|Gestiona información en formato XML analizando y utilizando tecnologías de almacenamiento y lenguajes de consulta.
+DAM|0373|7|Opera sistemas empresariales de gestión de información realizando tareas de importación, integración, aseguramiento y extracción de la información.
+DAM|0483|1|Evalúa sistemas informáticos identificando sus componentes y características.
+DAM|0483|2|Instala sistemas operativos planificando el proceso e interpretando documentación técnica.
+DAM|0483|3|Gestiona la información del sistema identificando las estructuras de almacenamiento y aplicando medidas para asegurar la integridad de los datos.
+DAM|0483|4|Gestiona sistemas operativos utilizando comandos y herramientas gráficas y evaluando las necesidades del sistema.
+DAM|0483|5|Interconecta sistemas en red configurando dispositivos y protocolos.
+DAM|0483|6|Opera sistemas en red gestionando sus recursos e identificando las restricciones de seguridad existentes.
+DAM|0483|7|Elabora documentación valorando y utilizando aplicaciones informáticas de propósito general.
+DAM|0484|1|Reconoce los elementos de las bases de datos analizando sus funciones y valorando la utilidad de los sistemas gestores.
+DAM|0484|2|Crea bases de datos definiendo su estructura y las características de sus elementos según el modelo relacional.
+DAM|0484|3|Consulta la información almacenada en una base de datos empleando asistentes, herramientas gráficas y el lenguaje de manipulación de datos.
+DAM|0484|4|Modifica la información almacenada en la base de datos utilizando asistentes, herramientas gráficas y el lenguaje de manipulación de datos.
+DAM|0484|5|Desarrolla procedimientos almacenados evaluando y utilizando las sentencias del lenguaje incorporado en el sistema gestor de bases de datos.
+DAM|0484|6|Diseña modelos relacionales normalizados interpretando diagramas entidad/relación.
+DAM|0484|7|Gestiona la información almacenada en bases de datos objeto-relacionales, evaluando y utilizando las posibilidades que proporciona el sistema gestor.
+DAM|0485|1|Reconoce la estructura de un programa informático, identificando y relacionando los elementos propios del lenguaje de programación utilizado.
+DAM|0485|2|Escribe y prueba programas sencillos, reconociendo y aplicando los fundamentos de la programación orientada a objetos.
+DAM|0485|3|Escribe y depura código, analizando y utilizando las estructuras de control del lenguaje.
+DAM|0485|4|Desarrolla programas organizados en clases analizando y aplicando los principios de la programación orientada a objetos.
+DAM|0485|5|Realiza operaciones de entrada y salida de información, utilizando procedimientos específicos del lenguaje y librerías de clases.
+DAM|0485|6|Escribe programas que manipulen información seleccionando y utilizando tipos avanzados de datos.
+DAM|0485|7|Desarrolla programas aplicando características avanzadas de los lenguajes orientados a objetos y del entorno de programación.
+DAM|0485|8|Utiliza bases de datos orientadas a objetos, analizando sus características y aplicando técnicas para mantener la persistencia de la información.
+DAM|0485|9|Gestiona información almacenada en bases de datos relacionales manteniendo la integridad y consistencia de los datos.
+DAM|0486|1|Desarrolla aplicaciones que gestionan información almacenada en ficheros identificando el campo de aplicación de los mismos y utilizando clases específicas.
+DAM|0486|2|Desarrolla aplicaciones que gestionan información almacenada en bases de datos relacionales identificando y utilizando mecanismos de conexión.
+DAM|0486|3|Gestiona la persistencia de los datos identificando herramientas de mapeo objeto relacional (ORM) y desarrollando aplicaciones que las utilizan.
+DAM|0486|4|Desarrolla aplicaciones que gestionan la información almacenada en bases de datos objeto relacionales y orientadas a objetos valorando sus características y utilizando los mecanismos de acceso incorporados.
+DAM|0486|5|Desarrolla aplicaciones que gestionan la información almacenada en bases de datos nativas XML evaluando y utilizando clases específicas.
+DAM|0486|6|Programa componentes de acceso a datos identificando las características que debe poseer un componente y utilizando herramientas de desarrollo.
+DAM|0487|1|Reconoce los elementos y herramientas que intervienen en el desarrollo de un programa informático, analizando sus características y las fases en las que actúan hasta llegar a su puesta en funcionamiento.
+DAM|0487|2|Evalúa entornos integrados de desarrollo analizando sus características para editar código fuente y generar ejecutables.
+DAM|0487|3|Verifica el funcionamiento de programas diseñando y realizando pruebas.
+DAM|0487|4|Optimiza código empleando las herramientas disponibles en el entorno de desarrollo.
+DAM|0487|5|Genera diagramas de clases valorando su importancia en el desarrollo de aplicaciones y empleando las herramientas disponibles en el entorno.
+DAM|0487|6|Genera diagramas de comportamiento valorando su importancia en el desarrollo de aplicaciones y empleando las herramientas disponibles en el entorno.
+DAM|0488|1|Genera interfaces gráficos de usuario mediante editores visuales utilizando las funcionalidades del editor y adaptando el código generado.
+DAM|0488|2|Genera interfaces gráficos de usuario basados en XML utilizando herramientas específicas y adaptando el documento XML generado.
+DAM|0488|3|Crea componentes visuales valorando y empleando herramientas específicas.
+DAM|0488|4|Diseña interfaces gráficos identificando y aplicando criterios de usabilidad.
+DAM|0488|5|Crea informes evaluando y utilizando herramientas gráficas.
+DAM|0488|6|Documenta aplicaciones seleccionando y utilizando herramientas específicas.
+DAM|0488|7|Prepara aplicaciones para su distribución evaluando y utilizando herramientas específicas.
+DAM|0488|8|Evalúa el funcionamiento de aplicaciones diseñando y ejecutando pruebas.
+DAM|0489|1|Aplica tecnologías de desarrollo para dispositivos móviles evaluando sus características y capacidades.
+DAM|0489|2|Desarrolla aplicaciones para dispositivos móviles analizando y empleando las tecnologías y librerías específicas.
+DAM|0489|3|Desarrolla programas que integran contenidos multimedia analizando y empleando las tecnologías y librerías específicas.
+DAM|0489|4|Selecciona y prueba motores de juegos analizando la arquitectura de juegos 2D y 3D.
+DAM|0489|5|Desarrolla juegos 2D y 3D sencillos utilizando motores de juegos.
+DAM|0490|1|Desarrolla aplicaciones compuestas por varios procesos reconociendo y aplicando principios de programación paralela.
+DAM|0490|2|Desarrolla aplicaciones compuestas por varios hilos de ejecución analizando y aplicando librerías específicas del lenguaje de programación.
+DAM|0490|3|Programa mecanismos de comunicación en red empleando sockets y analizando el escenario de ejecución.
+DAM|0490|4|Desarrolla aplicaciones que ofrecen servicios en red, utilizando librerías de clases y aplicando criterios de eficiencia y disponibilidad.
+DAM|0490|5|Protege las aplicaciones y los datos definiendo y aplicando criterios de seguridad en el acceso, almacenamiento y transmisión de la información.
+DAM|0491|1|Identifica sistemas de planificación de recursos empresariales y de gestión de relaciones con clientes (ERP-CRM) reconociendo sus características y verificando la configuración del sistema informático.
+DAM|0491|2|Implanta sistemas ERP-CRM interpretando la documentación técnica e identificando las diferentes opciones y módulos.
+DAM|0491|3|Realiza operaciones de gestión y consulta de la información siguiendo las especificaciones de diseño y utilizando las herramientas proporcionadas por los sistemas ERP-CRM.
+DAM|0491|4|Adapta sistemas ERP-CRM identificando los requerimientos de un supuesto empresarial y utilizando las herramientas proporcionadas por los mismos.
+DAM|0491|5|Desarrolla componentes para un sistema ERP-CRM analizando y utilizando el lenguaje de programación incorporado.
+DAM|0492|1|Identifica necesidades del sector productivo, relacionándolas con proyectos tipo que puedan satisfacerlas.
+DAM|0492|2|Diseña proyectos relacionados con las competencias expresadas en el título, desarrollando explícitamente las fases que lo componen.
+DAM|0492|3|Planifica la ejecución del proyecto, determinando el plan de intervención y la documentación asociada.
+DAM|0492|4|Define los procedimientos para el seguimiento y control en la ejecución del proyecto, justificando la selección de variables e instrumentos empleados.
+DAW|0373|1|Reconoce las características de lenguajes de marcas, analizando e interpretando fragmentos de código.
+DAW|0373|2|Utiliza lenguajes de marcas para la transmisión de información a través de la web, analizando la estructura de los documentos e identificando sus elementos.
+DAW|0373|3|Genera canales de contenidos analizando y utilizando tecnologías de sindicación.
+DAW|0373|4|Establece mecanismos de validación para documentos XML utilizando métodos para definir su sintaxis y estructura.
+DAW|0373|5|Realiza conversiones sobre documentos XML utilizando técnicas y herramientas de procesamiento.
+DAW|0373|6|Gestiona información en formato XML analizando y utilizando tecnologías de almacenamiento y lenguajes de consulta.
+DAW|0373|7|Opera sistemas empresariales de gestión de información realizando tareas de importación, integración, aseguramiento y extracción de la información.
+DAW|0483|1|Evalúa sistemas informáticos identificando sus componentes y características.
+DAW|0483|2|Instala sistemas operativos planificando el proceso e interpretando documentación técnica.
+DAW|0483|3|Gestiona la información del sistema, identificando las estructuras de almacenamiento y aplicando medidas para asegurar la integridad de los datos.
+DAW|0483|4|Gestiona sistemas operativos utilizando comandos y herramientas gráficas y evaluando las necesidades del sistema.
+DAW|0483|5|Interconecta sistemas en red configurando dispositivos y protocolos.
+DAW|0483|6|Opera sistemas en red gestionando sus recursos e identificando las restricciones de seguridad existentes.
+DAW|0483|7|Elabora documentación valorando y utilizando aplicaciones informáticas de propósito general.
+DAW|0484|1|Reconoce los elementos de las bases de datos analizando sus funciones y valorando la utilidad de los sistemas gestores.
+DAW|0484|2|Crea bases de datos definiendo su estructura y las características de sus elementos según el modelo relacional.
+DAW|0484|3|Consulta la información almacenada en una base de datos empleando asistentes, herramientas gráficas y el lenguaje de manipulación de datos.
+DAW|0484|4|Modifica la información almacenada en la base de datos utilizando asistentes, herramientas gráficas y el lenguaje de manipulación de datos.
+DAW|0484|5|Desarrolla procedimientos almacenados, evaluando y utilizando las sentencias del lenguaje incorporado en el sistema gestor de bases de datos.
+DAW|0484|6|Diseña modelos relacionales normalizados interpretando diagramas entidad/relación.
+DAW|0484|7|Gestiona la información almacenada en bases de datos objeto-relacionales, evaluando y utilizando las posibilidades que proporciona el sistema gestor.
+DAW|0485|1|Reconoce la estructura de un programa informático, identificando y relacionando los elementos propios del lenguaje de programación utilizado.
+DAW|0485|2|Escribe y prueba programas sencillos, reconociendo y aplicando los fundamentos de la programación orientada a objetos.
+DAW|0485|3|Escribe y depura código, analizando y utilizando las estructuras de control del lenguaje.
+DAW|0485|4|Desarrolla programas organizados en clases analizando y aplicando los principios de la programación orientada a objetos.
+DAW|0485|5|Realiza operaciones de entrada y salida de información, utilizando procedimientos específicos del lenguaje y librerías de clases.
+DAW|0485|6|Escribe programas que manipulen información, seleccionando y utilizando tipos avanzados de datos.
+DAW|0485|7|Desarrolla programas, aplicando características avanzadas de los lenguajes orientados a objetos y del entorno de programación.
+DAW|0485|8|Utiliza bases de datos orientadas a objetos, analizando sus características y aplicando técnicas para mantener la persistencia de la información.
+DAW|0485|9|Gestiona información almacenada en bases de datos relacionales manteniendo la integridad y la consistencia de los datos.
+DAW|0487|1|Reconoce los elementos y herramientas que intervienen en el desarrollo de un programa informático, analizando sus características y las fases en las que actúan hasta llegar a su puesta en funcionamiento.
+DAW|0487|2|Evalúa entornos integrados de desarrollo, analizando, sus características para editar código fuente y generar ejecutables.
+DAW|0487|3|Verifica el funcionamiento de programas, diseñando y realizando pruebas.
+DAW|0487|4|Optimiza código empleando las herramientas disponibles en el entorno de desarrollo.
+DAW|0487|5|Genera diagramas de clases valorando su importancia en el desarrollo de aplicaciones y empleando las herramientas disponibles en el entorno.
+DAW|0487|6|Genera diagramas de comportamiento valorando su importancia en el desarrollo de aplicaciones y empleando las herramientas disponibles en el entorno.
+DAW|0612|1|Selecciona las arquitecturas y tecnologías de programación sobre clientes Web, identificando y analizando las capacidades y características de cada una.
+DAW|0612|2|Escribe sentencias simples, aplicando la sintaxis del lenguaje y verificando su ejecución sobre navegadores Web.
+DAW|0612|3|Escribe código, identificando y aplicando las funcionalidades aportadas por los objetos predefinidos del lenguaje.
+DAW|0612|4|Programa código para clientes Web analizando y utilizando estructuras definidas por el usuario.
+DAW|0612|5|Desarrolla aplicaciones Web interactivas integrando mecanismos de manejo de eventos.
+DAW|0612|6|Desarrolla aplicaciones web analizando y aplicando las características del modelo de objetos del documento.
+DAW|0612|7|Desarrolla aplicaciones Web dinámicas, reconociendo y aplicando mecanismos de comunicación asíncrona entre cliente y servidor.
+DAW|0613|1|Selecciona las arquitecturas y tecnologías de programación Web en entorno servidor, analizando sus capacidades y características propias.
+DAW|0613|2|Escribe sentencias ejecutables por un servidor Web reconociendo y aplicando procedimientos de integración del código en lenguajes de marcas.
+DAW|0613|3|Escribe bloques de sentencias embebidos en lenguajes de marcas, seleccionando y utilizando las estructuras de programación.
+DAW|0613|4|Desarrolla aplicaciones Web embebidas en lenguajes de marcas analizando e incorporando funcionalidades según especificaciones.
+DAW|0613|5|Desarrolla aplicaciones Web identificando y aplicando mecanismos para separar el código de presentación de la lógica de negocio.
+DAW|0613|6|Desarrolla aplicaciones de acceso a almacenes de datos, aplicando medidas para mantener la seguridad y la integridad de la información.
+DAW|0613|7|Desarrolla servicios Web analizando su funcionamiento e implantando la estructura de sus componentes.
+DAW|0613|8|Genera páginas Web dinámicas analizando y utilizando tecnologías del servidor Web que añadan código al lenguaje de marcas.
+DAW|0613|9|Desarrolla aplicaciones Web híbridas seleccionando y utilizando librerías de código y repositorios heterogéneos de información.
+DAW|0614|1|Implanta arquitecturas Web analizando y aplicando criterios de funcionalidad.
+DAW|0614|2|Gestiona servidores Web, evaluando y aplicando criterios de configuración para el acceso seguro a los servicios.
+DAW|0614|3|Implanta aplicaciones Web en servidores de aplicaciones, evaluando y aplicando criterios de configuración para su funcionamiento seguro.
+DAW|0614|4|Administra servidores de transferencia de archivos, evaluando y aplicando criterios de configuración que garanticen la disponibilidad del servicio.
+DAW|0614|5|Verifica la ejecución de aplicaciones Web comprobando los parámetros de configuración de servicios de red.
+DAW|0614|6|Elabora la documentación de la aplicación Web evaluando y seleccionando herramientas de generación de documentación y control de versiones.
+DAW|0615|1|Planifica la creación de una interfaz web valorando y aplicando especificaciones de diseño.
+DAW|0615|2|Crea interfaces Web homogéneos definiendo y aplicando estilos.
+DAW|0615|3|Prepara archivos multimedia para la Web, analizando sus características y manejando herramientas especificas.
+DAW|0615|4|Integra contenido multimedia en documentos Web valorando su aportación y seleccionando adecuadamente los elementos interactivos.
+DAW|0615|5|Desarrolla interfaces Web accesibles, analizando las pautas establecidas y aplicando técnicas de verificación.
+DAW|0615|6|Desarrolla interfaces Web amigables analizando y aplicando las pautas de usabilidad establecidas.
+DAW|0616|1|Identifica necesidades del sector productivo, relacionándolas con proyectos tipo que las puedan satisfacer.
+DAW|0616|2|Diseña proyectos relacionados con las competencias expresadas en el título, incluyendo y desarrollando las fases que lo componen.
+DAW|0616|3|Planifica la ejecución del proyecto, determinando el plan de intervención y la documentación asociada.
+DAW|0616|4|Define los procedimientos para el seguimiento y control en la ejecución del proyecto, justificando la selección de variables e instrumentos empleados.
+ASIR|0369|1|Instala sistemas operativos, analizando sus características e interpretando la documentación técnica.
+ASIR|0369|2|Configura el software de base, analizando las necesidades de explotación del sistema informático.
+ASIR|0369|3|Asegura la información del sistema, describiendo los procedimientos y utilizando copias de seguridad y sistemas tolerantes a fallos.
+ASIR|0369|4|Centraliza la información en servidores administrando estructuras de dominios y analizando sus ventajas.
+ASIR|0369|5|Administra el acceso a dominios analizando y respetando requerimientos de seguridad.
+ASIR|0369|6|Detecta problemas de rendimiento, monitorizando el sistema con las herramientas adecuadas y documentando el procedimiento.
+ASIR|0369|7|Audita la utilización y acceso a recursos, identificando y respetando las necesidades de seguridad del sistema.
+ASIR|0369|8|Implanta software específico con estructura cliente/servidor dando respuesta a los requisitos funcionales.
+ASIR|0370|1|Reconoce la estructura de las redes de datos identificando sus elementos y principios de funcionamiento.
+ASIR|0370|2|Integra ordenadores y periféricos en redes cableadas e inalámbricas, evaluando su funcionamiento y prestaciones.
+ASIR|0370|3|Administra conmutadores estableciendo opciones de configuración para su integración en la red.
+ASIR|0370|4|Administra las funciones básicas de un «router» estableciendo opciones de configuración para su integración en la red.
+ASIR|0370|5|Configura redes locales virtuales identificando su campo de aplicación.
+ASIR|0370|6|Realiza tareas avanzadas de administración de red analizando y utilizando protocolos dinámicos de encaminamiento.
+ASIR|0370|7|Conecta redes privadas a redes públicas identificando y aplicando diferentes tecnologías.
+ASIR|0371|1|Configura equipos microinformáticos, componentes y periféricos, analizando sus características y relación con el conjunto.
+ASIR|0371|2|Instala software de propósito general evaluando sus características y entornos de aplicación.
+ASIR|0371|3|Ejecuta procedimientos para recuperar el software base de un equipo, analizándolos y utilizando imágenes almacenadas en memoria auxiliar.
+ASIR|0371|4|Implanta hardware específico de centros de proceso de datos (CPD), analizando sus características y aplicaciones.
+ASIR|0371|5|Cumple las normas de prevención de riesgos laborales y de protección ambiental, identificando los riesgos asociados, las medidas y equipos para prevenirlos.
+ASIR|0372|1|Reconoce los elementos de las bases de datos analizando sus funciones y valorando la utilidad de sistemas gestores.
+ASIR|0372|2|Diseña modelos lógicos normalizados interpretando diagramas entidad/relación.
+ASIR|0372|3|Realiza el diseño físico de bases de datos utilizando asistentes, herramientas gráficas y el lenguaje de definición de datos.
+ASIR|0372|4|Consulta la información almacenada manejando asistentes, herramientas gráficas y el lenguaje de manipulación de datos.
+ASIR|0372|5|Modifica la información almacenada utilizando asistentes, herramientas gráficas y el lenguaje de manipulación de datos.
+ASIR|0372|6|Ejecuta tareas de aseguramiento de la información, analizándolas y aplicando mecanismos de salvaguarda y transferencia.
+ASIR|0373|1|Reconoce las características de lenguajes de marcas analizando e interpretando fragmentos de código.
+ASIR|0373|2|Utiliza lenguajes de marcas para la transmisión de información a través de la Web analizando la estructura de los documentos e identificando sus elementos.
+ASIR|0373|3|Genera canales de contenidos analizando y utilizando tecnologías de sindicación.
+ASIR|0373|4|Establece mecanismos de validación para documentos XML utilizando métodos para definir su sintaxis y estructura.
+ASIR|0373|5|Realiza conversiones sobre documentos XML utilizando técnicas y herramientas de procesamiento.
+ASIR|0373|6|Gestiona información en formato XML analizando y utilizando tecnologías de almacenamiento y lenguajes de consulta.
+ASIR|0373|7|Trabaja con sistemas empresariales de gestión de información realizando tareas de importación, integración, aseguramiento y extracción de la información.
+ASIR|0374|1|Administra el servicio de directorio interpretando especificaciones e integrándolo en una red.
+ASIR|0374|2|Administra procesos del sistema describiéndolos y aplicando criterios de seguridad y eficiencia.
+ASIR|0374|3|Gestiona la automatización de tareas del sistema, aplicando criterios de eficiencia y utilizando comandos y herramientas gráficas.
+ASIR|0374|4|Administra de forma remota el sistema operativo en red valorando su importancia y aplicando criterios de seguridad.
+ASIR|0374|5|Administra servidores de impresión describiendo sus funciones e integrándolos en una red.
+ASIR|0374|6|Integra sistemas operativos libres y propietarios, justificando y garantizando su interoperabilidad.
+ASIR|0374|7|Utiliza lenguajes de guiones en sistemas operativos, describiendo su aplicación y administrando servicios del sistema operativo.
+ASIR|0375|1|Administra servicios de resolución de nombres, analizándolos y garantizando la seguridad del servicio.
+ASIR|0375|2|Administra servicios de configuración automática, identificándolos y verificando la correcta asignación de los parámetros.
+ASIR|0375|3|Administra servidores Web aplicando criterios de configuración y asegurando el funcionamiento del servicio.
+ASIR|0375|4|Administra servicios de transferencia de archivos asegurando y limitando el acceso a la información.
+ASIR|0375|5|Administra servidores de correo electrónico, aplicando criterios de configuración y garantizando la seguridad del servicio.
+ASIR|0375|6|Administra servicios de mensajería instantánea, noticias y listas de distribución, verificando y asegurando el acceso de los usuarios.
+ASIR|0375|7|Administra servicios de audio identificando las necesidades de distribución y adaptando los formatos.
+ASIR|0375|8|Administra servicios de vídeo identificando las necesidades de distribución y adaptando los formatos.
+ASIR|0376|1|Prepara el entorno de desarrollo y los servidores de aplicaciones Web instalando e integrando las funcionalidades necesarias.
+ASIR|0376|2|Implanta gestores de contenidos seleccionándolos y estableciendo la configuración de sus parámetros.
+ASIR|0376|3|Administra gestores de contenidos adaptándolos a los requerimientos y garantizando la integridad de la información.
+ASIR|0376|4|Gestiona aplicaciones de ofimática Web integrando funcionalidades y asegurando el acceso a la información.
+ASIR|0376|5|Genera documentos Web utilizando lenguajes de guiones de servidor.
+ASIR|0376|6|Genera documentos Web con acceso a bases de datos utilizando lenguajes de guiones de servidor.
+ASIR|0376|7|Realiza modificaciones en gestores de contenidos adaptando su apariencia y funcionalidades.
+ASIR|0377|1|Implanta sistemas gestores de bases de datos analizando sus características y ajustándose a los requerimientos del sistema.
+ASIR|0377|2|Configura el sistema gestor de bases de datos interpretando las especificaciones técnicas y los requisitos de explotación.
+ASIR|0377|3|Implanta métodos de control de acceso utilizando asistentes, herramientas gráficas y comandos del lenguaje del sistema gestor.
+ASIR|0377|4|Automatiza tareas de administración del gestor describiéndolas y utilizando guiones de sentencias.
+ASIR|0377|5|Optimiza el rendimiento del sistema aplicando técnicas de monitorización y realizando adaptaciones.
+ASIR|0377|6|Aplica criterios de disponibilidad analizándolos y ajustando la configuración del sistema gestor.
+ASIR|0378|1|Adopta pautas y prácticas de tratamiento seguro de la información, reconociendo las vulnerabilidades de un sistema informático y la necesidad de asegurarlo.
+ASIR|0378|2|Implanta mecanismos de seguridad activa, seleccionando y ejecutando contramedidas ante amenazas o ataques al sistema.
+ASIR|0378|3|Implanta técnicas seguras de acceso remoto a un sistema informático, interpretando y aplicando el plan de seguridad.
+ASIR|0378|4|Implanta cortafuegos para asegurar un sistema informático, analizando sus prestaciones y controlando el tráfico hacia la red interna.
+ASIR|0378|5|Implanta servidores «proxy», aplicando criterios de configuración que garanticen el funcionamiento seguro del servicio.
+ASIR|0378|6|Implanta soluciones de alta disponibilidad empleando técnicas de virtualización y configurando los entornos de prueba.
+ASIR|0378|7|Reconoce la legislación y normativa sobre seguridad y protección de datos valorando su importancia.
+ASIR|0379|1|Identifica necesidades del sector productivo relacionándolas con proyectos tipo que las puedan satisfacer.
+ASIR|0379|2|Diseña proyectos relacionados con las competencias expresadas en el título, incluyendo y desarrollando las fases que lo componen.
+ASIR|0379|3|Planifica la puesta en funcionamiento o ejecución del proyecto, determinando el plan de intervención y la documentación asociada.
+ASIR|0379|4|Define los procedimientos para el seguimiento y control en la ejecución del proyecto, justificando la selección de variables e instrumentos empleados.
+SMR|0221|1|Selecciona los componentes de integración de un equipo microinformático estándar, describiendo sus funciones y comparando prestaciones de distintos fabricantes.
+SMR|0221|2|Ensambla un equipo microinformático, interpretando planos e instrucciones del fabricante aplicando técnicas de montaje.
+SMR|0221|3|Mide parámetros eléctricos, identificando el tipo de señal y relacionándola con sus unidades características.
+SMR|0221|4|Mantiene equipos informáticos interpretando las recomendaciones de los fabricantes y relacionando las disfunciones con sus causas.
+SMR|0221|5|Instala software en un equipo informático utilizando una imagen almacenada en un soporte de memoria y justificando el procedimiento a seguir.
+SMR|0221|6|Reconoce nuevas tendencias en el ensamblaje de equipos microinformáticos describiendo sus ventajas y adaptándolas a las características de uso de los equipos.
+SMR|0221|7|Mantiene periféricos, interpretando las recomendaciones de los fabricantes de equipos y relacionando disfunciones con sus causas.
+SMR|0221|8|Cumple las normas de prevención de riesgos laborales y de protección ambiental, identificando los riesgos asociados, las medidas y equipos para prevenirlos.
+SMR|0222|1|Reconoce las características de los sistemas de archivo, describiendo sus tipos y aplicaciones.
+SMR|0222|2|Instala sistemas operativos, relacionando sus características con el hardware del equipo y el software de aplicación.
+SMR|0222|3|Realiza tareas básicas de configuración de sistemas operativos, interpretando requerimientos y describiendo los procedimientos seguidos.
+SMR|0222|4|Realiza operaciones básicas de administración de sistemas operativos, interpretando requerimientos y optimizando el sistema para su uso.
+SMR|0222|5|Crea máquinas virtuales identificando su campo de aplicación e instalando software específico.
+SMR|0223|1|Instala y actualiza aplicaciones ofimáticas, interpretando especificaciones y describiendo los pasos a seguir en el proceso.
+SMR|0223|2|Elabora documentos y plantillas, describiendo y aplicando las opciones avanzadas de procesadores de textos.
+SMR|0223|3|Elabora documentos y plantillas de cálculo, describiendo y aplicando opciones avanzadas de hojas de cálculo.
+SMR|0223|4|Elabora documentos con bases de datos ofimáticas describiendo y aplicando operaciones de manipulación de datos.
+SMR|0223|5|Manipula imágenes digitales analizando las posibilidades de distintos programas y aplicando técnicas de captura y edición básicas.
+SMR|0223|6|Manipula secuencias de vídeo analizando las posibilidades de distintos programas y aplicando técnicas de captura y edición básicas.
+SMR|0223|7|Elabora presentaciones multimedia describiendo y aplicando normas básicas de composición y diseño.
+SMR|0223|8|Realiza operaciones de gestión del correo y la agenda electrónica, relacionando necesidades de uso con su configuración.
+SMR|0223|9|Aplica técnicas de soporte en el uso de aplicaciones, identificando y resolviendo incidencias.
+SMR|0224|1|Instala sistemas operativos en red describiendo sus características e interpretando la documentación técnica.
+SMR|0224|2|Gestiona usuarios y grupos de sistemas operativos en red, interpretando especificaciones y aplicando herramientas del sistema.
+SMR|0224|3|Realiza tareas de gestión sobre dominios identificando necesidades y aplicando herramientas de administración de dominios.
+SMR|0224|4|Gestiona los recursos compartidos del sistema, interpretando especificaciones y determinando niveles de seguridad.
+SMR|0224|5|Realiza tareas de monitorización y uso del sistema operativo en red, describiendo las herramientas utilizadas e identificando las principales incidencias.
+SMR|0224|6|Realiza tareas de integración de sistemas operativos libres y propietarios, describiendo las ventajas de compartir recursos e instalando software específico.
+SMR|0225|1|Reconoce la estructura de redes locales cableadas analizando las características de entornos de aplicación y describiendo la funcionalidad de sus componentes.
+SMR|0225|2|Despliega el cableado de una red local interpretando especificaciones y aplicando técnicas de montaje.
+SMR|0225|3|Interconecta equipos en redes locales cableadas describiendo estándares de cableado y aplicando técnicas de montaje de conectores.
+SMR|0225|4|Instala equipos en red, describiendo sus prestaciones y aplicando técnicas de montaje.
+SMR|0225|5|Mantiene una red local interpretando recomendaciones de los fabricantes de hardware o software y estableciendo la relación entre disfunciones y sus causas.
+SMR|0225|6|Cumple las normas de prevención de riesgos laborales y de protección ambiental, identificando los riesgos asociados, las medidas y equipos para prevenirlos.
+SMR|0226|1|Aplica medidas de seguridad pasiva en sistemas informáticos describiendo características de entornos y relacionándolas con sus necesidades.
+SMR|0226|2|Gestiona dispositivos de almacenamiento describiendo los procedimientos efectuados y aplicando técnicas para asegurar la integridad de la información.
+SMR|0226|3|Aplica mecanismos de seguridad activa describiendo sus características y relacionándolas con las necesidades de uso del sistema informático.
+SMR|0226|4|Asegura la privacidad de la información transmitida en redes informáticas describiendo vulnerabilidades e instalando software especifico.
+SMR|0226|5|Reconoce la legislación y normativa sobre seguridad y protección de datos analizando las repercusiones de su incumplimiento.
+SMR|0227|1|Instala servicios de configuración dinámica, describiendo sus características y aplicaciones.
+SMR|0227|2|Instala servicios de resolución de nombres, describiendo sus características y aplicaciones.
+SMR|0227|3|Instala servicios de transferencia de ficheros, describiendo sus características y aplicaciones.
+SMR|0227|4|Gestiona servidores de correo electrónico identificando requerimientos de utilización y aplicando criterios de configuración.
+SMR|0227|5|Gestiona servidores web identificando requerimientos de utilización y aplicando criterios de configuración.
+SMR|0227|6|Gestiona métodos de acceso remoto describiendo sus características e instalando los servicios correspondientes.
+SMR|0227|7|Despliega redes inalámbricas seguras justificando la configuración elegida y describiendo los procedimientos de implantación.
+SMR|0227|8|Establece el acceso desde redes locales a redes públicas identificando posibles escenarios y aplicando software específico.
+SMR|0228|1|Instala gestores de contenidos, identificando sus aplicaciones y configurándolos según requerimientos.
+SMR|0228|2|Instala sistemas de gestión de aprendizaje a distancia, describiendo la estructura del sitio y la jerarquía de directorios generada.
+SMR|0228|3|Instala servicios de gestión de archivos web, identificando sus aplicaciones y verificando su integridad.
+SMR|0228|4|Instala aplicaciones de ofimática web, describiendo sus características y entornos de uso.
+SMR|0228|5|Instala aplicaciones web de escritorio, describiendo sus características y entornos de uso.
+TRANS|1709|1|Distingue las características del sector productivo y define los puestos de trabajo relacionándolos con las competencias profesionales expresadas en el título.
+TRANS|1709|2|Alcanza las competencias necesarias para la obtención del título de Técnico Básico en Prevención de Riesgos Laborales.
+TRANS|1709|3|Analiza sus condiciones laborales como persona trabajadora por cuenta ajena identificándolas en los principales tipos de cambios y vicisitudes relevantes que se pueden presentar en la relación laboral en la normativa laboral y especialmente en el convenio colectivo del sector.
+TRANS|1709|4|Analiza y evalúa su potencial profesional y sus intereses para guiarse en el proceso de autoorientación y elabora una hoja de ruta para la inserción profesional en base al análisis de las competencias, intereses y destrezas personales.
+TRANS|1709|5|Aplica las estrategias para el aprendizaje autónomo reconociendo su valor profesionalizador, diseñando y optimizando su propio entorno de aprendizaje haciendo uso de las tecnologías digitales como herramientas de aprendizaje autónomo, siendo coherente con su identidad digital y sus propios objetivos profesionales planteados en su plan de desarrollo individual.
+TRANS|1710|1|Planifica y pone en marcha estrategias en los diferentes procesos selectivos de empleo que le permiten mejorar sus posibilidades de inserción laboral.
+TRANS|1710|2|Aplica estrategias relacionadas con las competencias personales, sociales y emocionales para el empleo en búsqueda de la mejora de su empleabilidad.
+TRANS|1710|3|Pone en práctica las habilidades emprendedoras necesarias para el desarrollo de procesos de innovación e investigación aplicadas que promuevan la modernización del sector productivo hacia un modelo sostenible.
+TRANS|1710|4|Identifica, define y valida ideas de emprendimiento generadoras de nuevas oportunidades a partir de estrategias de análisis del entorno socio productivo utilizando metodologías ágiles para el emprendimiento.
+TRANS|1710|5|Desarrolla un proyecto emprendedor de innovación social y/o tecnológica aplicada en colaboración con el entorno.
+TRANS|1708|1|Identifica los aspectos ambientales, sociales y de gobernanza (ASG) relativos a la sostenibilidad teniendo en cuenta el concepto de desarrollo sostenible y los marcos internacionales que contribuyen a su consecución.
+TRANS|1708|2|Caracteriza los retos ambientales y sociales a los que se enfrenta la sociedad, describiendo los impactos sobre las personas y los sectores productivos y proponiendo acciones para minimizarlos.
+TRANS|1708|3|Establece la aplicación de criterios de sostenibilidad en el desempeño profesional y personal, identificando los elementos necesarios.
+TRANS|1708|4|Propón productos y servicios responsables teniendo en cuenta los principios de la economía circular.
+TRANS|1708|5|Realiza actividades sostenibles minimizando el impacto de las mismas en el medio ambiente.
+TRANS|1708|6|Analiza un plan de sostenibilidad de una empresa del sector, identificando sus grupos de interés, los aspectos ASG materiales y justificando acciones para su gestión y medición.
+SUPER|1665|1|Analiza el concepto de digitalización y su repercusión en los sectores productivos teniendo en cuenta la actividad de la empresa e identificando entornos IT ( Information Technology : tecnología de la información) y OT ( Operation Technology : tecnología de operación) característicos.
+SUPER|1665|2|Caracteriza las tecnologías habilitadoras digitales necesarias para la adecuación/transformación de las empresas a entornos digitales describiendo sus características y aplicaciones.
+SUPER|1665|3|Identifica sistemas basados en cloud /nube y su influencia en el desarrollo de los sistemas digitales.
+SUPER|1665|4|Identifica aplicaciones de la IA (inteligencia artificial) en entornos del sector donde está enmarcado el título describiendo las mejoras implícitas en su implementación.
+SUPER|1665|5|Evalúa la importancia de los datos, así como su protección en una economía digital globalizada, definiendo sistemas de seguridad y ciberseguridad tanto a nivel de equipo/sistema, como globales.
+SUPER|1665|6|Desarrolla un proyecto de transformación digital de una empresa de un sector relacionado con el título, teniendo en cuenta los cambios que se deben producir en función de los objetivos de la empresa.
+SUPER|0179|1|Comprende información, de índole profesional, académica y cotidiana, contenida en todo tipo de discursos orales, emitidos por cualquier medio de comunicación en lengua estándar, interpretando con precisión el contenido del mensaje.
+SUPER|0179|2|Comprende mensajes escritos, de naturaleza profesional, académica y cotidiana, de relativa dificultad, analizando de forma comprensiva su contenido.
+SUPER|0179|3|Produce mensajes orales claros y bien estructurados, analizando el contenido de la situación y adaptándose al registro lingüístico del interlocutor.
+SUPER|0179|4|Redacta documentos e informes, propios del sector o de la vida académica y cotidiana, relacionando los recursos lingüísticos con el propósito de los mismos.
+SUPER|0179|5|Aplica actitudes y comportamientos profesionales en situaciones de comunicación, describiendo las relaciones típicas características del país de la lengua extranjera.
+MEDIO|1664|1|Establece las diferencias entre la Economía Lineal (EL) y la Economía Circular (EC), identificando las ventajas de la EC en relación con el medioambiente y el desarrollo sostenible.
+MEDIO|1664|2|Caracteriza los principales aspectos de la 4.ª Revolución Industrial indicando los cambios y las ventajas que se producen tanto desde el punto de vista de los clientes como de las empresas.
+MEDIO|1664|3|Identifica la estructura de los sistemas basados en cloud /nube describiendo su tipología y campo de aplicación.
+MEDIO|1664|4|Compara los sistemas de producción/prestación de servicios digitalizados con los sistemas clásicos identificando las mejoras introducidas.
+MEDIO|1664|5|Elabora un plan de transformación de una empresa clásica del sector en el que se enmarca el título, basada en una EL, al concepto 4.0, determinando los cambios a introducir en las principales fases del sistema e indicando como afectaría a los recursos humanos.
+MEDIO|0156|1|Comprende información, de índole profesional y cotidiana, contenida en discursos orales sencillos, emitidos en lengua estándar, descifrando el contenido global del mensaje, y relacionándolo con los recursos lingüísticos correspondientes.
+MEDIO|0156|2|Comprende información profesional contenida en textos escritos sencillos, analizando de forma comprensiva su contenido.
+MEDIO|0156|3|Produce mensajes orales sencillos, claros y estructurados, participando como agente activo en conversaciones profesionales.
+MEDIO|0156|4|Redacta textos sencillos en lengua estándar, relacionando las reglas gramaticales con la finalidad de los mismos.
+MEDIO|0156|5|Aplica actitudes y comportamientos profesionales en situaciones de comunicación, describiendo las relaciones típicas características del país de la lengua extranjera.
+MEDIO|1713|1|Caracteriza las empresas del sector atendiendo a su organización y al tipo de producto o servicio que ofrecen.
+MEDIO|1713|2|Plantea soluciones a las necesidades del sector teniendo en cuenta la viabilidad de las mismas, los costes asociados y elaborando un pequeño proyecto.
+MEDIO|1713|3|Planifica la ejecución de las actividades propuestas a la solución planteada, determinando el plan de intervención y elaborando la documentación correspondiente.
+MEDIO|1713|4|Realiza el seguimiento de la ejecución de las actividades planteadas, verificando que se cumple con la planificación.
+MEDIO|1713|5|Transmite información con claridad, de manera ordenada y estructurada.

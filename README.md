@@ -107,6 +107,34 @@ del catálogo.
 
 Se pueden consultar en el catálogo público **`/ciclos`**, enlazado desde la cabecera.
 
+### Resultados de aprendizaje
+
+Cada módulo tiene sus resultados de aprendizaje oficiales en la tabla `ras` (clave ajena
+`ras.modulo_id` → `modulos.id`), con el orden y el texto literal del BOE. Se muestran como
+desplegables dentro del catálogo `/ciclos` y se dan de alta solos al arrancar
+(`RasIniciales`, después de los módulos): sube cada RA por módulo y orden, crea los que
+faltan y borra los que ya no estén en el fichero. Son **373 RA en los 61 módulos con
+código**; los 4 módulos optativos no tienen RA porque la optativa la elige cada centro.
+
+Los textos viven en `src/main/resources/ras.txt` y se regeneran desde el BOE con
+`python tools/generar_ras.py`. Cada línea es `GRUPO|CODIGO_MODULO|ORDEN|TEXTO`, y el grupo
+indica de qué Real Decreto procede y a qué ciclos se aplica:
+
+| Grupo | Fuente (BOE) | Ciclos | Módulos |
+|---|---|---|---|
+| `DAM` | RD 450/2010 | DAM | 0373, 0483-0492 |
+| `DAW` | RD 686/2010 | DAW | 0373, 0483-0485, 0487, 0612-0616 |
+| `ASIR` | RD 1629/2009 | ASIR | 0369-0379 |
+| `SMR` | RD 1691/2007 | SMR | 0221-0228 |
+| `TRANS` | RD 659/2023 | los cuatro | 1709, 1710, 1708 |
+| `SUPER` | RD 659/2023 | DAM, DAW y ASIR | 1665, 0179 |
+| `MEDIO` | RD 659/2023 y RD 499/2024 | SMR | 1664, 0156, 1713 |
+
+El mismo código puede variar ligeramente de un título a otro (el 0373 solo cambia en las
+comas de un Real Decreto a otro), por eso cada ciclo toma la fuente de su propio título y
+los módulos transversales se comparten entre ciclos. La relación es `@ManyToOne` desde el
+RA hacia el módulo, como en todo el proyecto: no hay ninguna `@OneToMany`.
+
 ## Control de acceso
 
 | Ruta | Acceso |
@@ -134,6 +162,8 @@ telosabes2026/
 │   ├── telosabes2026-copia.service   # unidad de copia (una sola vez)
 │   ├── telosabes2026-copia.timer     # ejecuta la copia una vez al día
 │   └── nginx-telosabes2026.conf      # Nginx como reverse proxy
+├── tools/
+│   └── generar_ras.py                # regenera ras.txt a partir del BOE
 ├── src/main/java/com/telosabes/telosabes2026/
 │   ├── Telosabes2026Application.java # clase principal
 │   ├── home/HomeController.java      # página de inicio "/"
@@ -146,6 +176,10 @@ telosabes2026/
 │   │   ├── ModuloRepository.java
 │   │   ├── ModulosIniciales.java     # alta automática de los módulos de cada ciclo
 │   │   └── ModuloController.java     # catálogo público /ciclos
+│   ├── ra/                           # resultados de aprendizaje (tabla "ras")
+│   │   ├── RA.java                   # entidad: orden, texto oficial y FK a modulos
+│   │   ├── RaRepository.java
+│   │   └── RasIniciales.java         # alta automática de los 373 RA (idempotente)
 │   ├── nota/                         # ejemplo CRUD completo (tabla "notas")
 │   │   ├── Nota.java                 # entidad, con autor (FK a usuarios)
 │   │   ├── NotaForm.java             # formulario: sin campo de autor
@@ -172,6 +206,7 @@ telosabes2026/
 ├── src/main/resources/
 │   ├── application.properties        # configuración (incluye MariaDB)
 │   ├── application-prod.properties   # perfil de producción (VPS + Nginx)
+│   ├── ras.txt                       # RA oficiales (lo genera tools/generar_ras.py)
 │   ├── static/css/estilos.css
 │   └── templates/
 │       ├── index.html
@@ -183,11 +218,12 @@ telosabes2026/
 │       ├── admin/editar-usuario.html # editar nombre, correo y ciclo
 │       ├── usuario/perfil.html       # "Mi perfil": datos y cambio de ciclo
 │       ├── profesor/panel.html
-│       ├── modulos/lista.html        # catálogo de ciclos y módulos
+│       ├── modulos/lista.html        # catálogo de ciclos, módulos y sus RA
 │       └── notas/lista.html
 ├── src/test/java/.../seguridad/SeguridadTests.java   # 14 pruebas de seguridad
 ├── src/test/java/.../ciclo/CicloTests.java           # 6 pruebas de ciclos y del registro
 ├── src/test/java/.../modulo/ModuloTests.java         # 6 pruebas de los módulos
+├── src/test/java/.../ra/RaTests.java                 # 6 pruebas de los RA de cada módulo
 ├── src/test/java/.../admin/AdminUsuariosTests.java   # 9 pruebas de la zona del administrador
 ├── src/test/java/.../usuario/PerfilTests.java        # 7 pruebas del perfil y su ciclo
 ├── src/test/java/.../nota/NotaTests.java             # 5 pruebas del autor de las notas
@@ -378,7 +414,7 @@ como autor de cada nota:
 
 ```bash
 mvnw.cmd clean package      # genera el .jar en target/
-mvnw.cmd test               # 48 pruebas (usan H2, no necesitan MariaDB)
+mvnw.cmd test               # 54 pruebas (usan H2, no necesitan MariaDB)
 ```
 
 Pruebas incluidas en `SeguridadTests`:

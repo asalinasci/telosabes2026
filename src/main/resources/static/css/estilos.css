@@ -324,6 +324,43 @@ th {
     white-space: nowrap;
 }
 
+/* ---------- Resultados de aprendizaje ---------- */
+.ra-detalle {
+    margin-top: .35rem;
+    font-size: .85rem;
+}
+
+.ra-detalle summary {
+    cursor: pointer;
+    color: #3568b8;
+    font-size: .8rem;
+    user-select: none;
+}
+
+.ra-detalle summary:hover {
+    text-decoration: underline;
+}
+
+.lista-ra {
+    margin: .5rem 0 .25rem;
+    padding-left: 1.4rem;
+    display: grid;
+    gap: .35rem;
+}
+
+.lista-ra li {
+    line-height: 1.45;
+    color: #2c3440;
+}
+
+.codigo-ra {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: .78rem;
+    font-weight: 700;
+    color: #3568b8;
+    margin-right: .35rem;
+}
+
 td.numero, th.numero {
     text-align: right;
     white-space: nowrap;
