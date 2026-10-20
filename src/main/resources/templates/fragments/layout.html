@@ -20,6 +20,7 @@
 
         <!-- Solo con sesion iniciada -->
         <span sec:authorize="isAuthenticated()">
+            <a th:href="@{/modulos/estudio}">Modulos</a>
             <a th:href="@{/perfil}">Mi perfil</a>
             <a th:href="@{/notas}">Notas</a>
             <!-- Profesores y administrador -->
@@ -44,6 +45,30 @@
         </form>
     </div>
 </header>
+
+<!-- ===== Resultados de aprendizaje y criterios de un modulo =====
+     Se reutiliza en el catalogo publico (/ciclos) y en la consulta de
+     estudio (/modulos/estudio). Espera: modulo, raPorModulo, criteriosPorRa. -->
+<div th:fragment="detalleTemario(modulo, raPorModulo, criteriosPorRa)"
+     class="temario" th:if="${raPorModulo.containsKey(modulo.id)}">
+    <details class="ra-detalle" open>
+        <summary th:text="|Resultados de aprendizaje (${#lists.size(raPorModulo.get(modulo.id))})|">
+            Resultados de aprendizaje (9)
+        </summary>
+        <ol class="lista-ra">
+            <li th:each="ra : ${raPorModulo.get(modulo.id)}">
+                <span class="codigo-ra" th:text="${ra.codigo}">RA1</span>
+                <span th:text="${ra.descripcion}">Texto del resultado de aprendizaje.</span>
+                <ol class="lista-criterios" th:if="${criteriosPorRa.containsKey(ra.id)}">
+                    <li th:each="c : ${criteriosPorRa.get(ra.id)}">
+                        <span class="letra-criterio" th:text="${c.letra}">a)</span>
+                        <span th:text="${c.descripcion}">Texto del criterio de evaluacion.</span>
+                    </li>
+                </ol>
+            </li>
+        </ol>
+    </details>
+</div>
 
 <!-- ===== Avisos (mensajes flash) ===== -->
 <div th:fragment="avisos" class="avisos">

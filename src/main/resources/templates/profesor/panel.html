@@ -9,6 +9,10 @@
     <h2>Panel del profesor</h2>
     <p class="ayuda">Zona accesible para profesores (y para el administrador).</p>
 
+    <p class="acciones">
+        <a class="boton pequeno" th:href="@{/modulos/estudio}">Ver RA y criterios de evaluacion</a>
+    </p>
+
     <div class="tarjetas">
         <div class="tarjeta">
             <h3 th:text="${totalAlumnos}">0</h3>
@@ -48,6 +52,7 @@
     </section>
 
     <p class="acciones">
+        <a class="boton" th:href="@{/modulos/estudio}">Resultados de aprendizaje y criterios</a>
         <a class="boton" th:href="@{/notas}">Ir al ejemplo CRUD de notas</a>
     </p>
 </main>

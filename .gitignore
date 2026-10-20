@@ -77,6 +77,10 @@ src/main/resources/application-local.properties
 # Se queda en el disco, pero no se sube al repositorio
 /documentacion/
 
+# ---------- Python (utilidades de tools/) ----------
+__pycache__/
+*.pyc
+
 # ---------- Sistema operativo ----------
 # Windows
 Thumbs.db

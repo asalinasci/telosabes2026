@@ -49,6 +49,8 @@
         <ul>
             <li><a th:href="@{/perfil}">Mi perfil</a>: tus datos y el ciclo que estudias
                 (puedes cambiarlo tu mismo).</li>
+            <li><a th:href="@{/modulos/estudio}">Resultados de aprendizaje y criterios</a>:
+                el temario de tu ciclo, modulo a modulo, con los criterios de evaluacion.</li>
             <li sec:authorize="hasRole('ADMIN')">
                 <a th:href="@{/admin/usuarios}">Gestionar usuarios</a>: convertir alumnos en profesores.
             </li>

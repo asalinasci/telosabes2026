@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Resultados de aprendizaje')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: cabecera}"></header>
+
+<main class="contenedor">
+    <h2>Resultados de aprendizaje y criterios de evaluacion</h2>
+    <p class="ayuda">
+        Elige el ciclo y consulta los modulos de sus dos cursos con los resultados de
+        aprendizaje (RA) y los criterios de evaluacion de cada uno. Todo el temario viene
+        desplegado; puedes plegarlo con la flecha de cada modulo.
+    </p>
+
+    <div th:replace="~{fragments/layout :: avisos}"></div>
+
+    <p th:if="${#lists.isEmpty(ciclos)}">Todavia no hay ciclos dados de alta.</p>
+
+    <!-- Selector de ciclo: el alumno puede cambiar de ciclo cuando quiera -->
+    <section class="panel" th:unless="${#lists.isEmpty(ciclos)}">
+        <form method="get" th:action="@{/modulos/estudio}" class="selector-ciclo">
+            <label for="cicloId">Ciclo</label>
+            <select id="cicloId" name="cicloId" onchange="this.form.submit()">
+                <option th:each="c : ${ciclos}" th:value="${c.id}" th:text="${c.etiqueta}"
+                        th:selected="${ciclo != null and ciclo.id == c.id}">DAM</option>
+            </select>
+            <noscript><button class="boton pequeno" type="submit">Ver</button></noscript>
+        </form>
+
+        <p class="ayuda" th:if="${ciclo != null}">
+            <strong th:text="${ciclo.siglas}">DAM</strong>
+            <span th:text="${ciclo.nombre}">Desarrollo de Aplicaciones Multiplataforma</span>
+            &middot; <span th:text="${totalRa}">96</span> resultados de aprendizaje.
+        </p>
+        <p class="ayuda" th:if="${!puedeElegirCiclo}">
+            Empiezas en el ciclo que estudias; puedes cambiar de ciclo con el desplegable.
+        </p>
+    </section>
+
+    <!-- Modulos del ciclo, curso a curso -->
+    <section class="panel" th:if="${ciclo != null}"
+             th:each="curso : ${#numbers.sequence(1, 2)}">
+        <h3 class="curso-titulo" th:text="${curso} + 'º curso'">1º curso</h3>
+
+        <p class="ayuda"
+           th:if="${modulosPorCurso.get(curso) == null or #lists.isEmpty(modulosPorCurso.get(curso))}">
+            Este curso no tiene modulos en este ciclo.
+        </p>
+
+        <article class="ficha-modulo" th:each="m : ${modulosPorCurso.get(curso)}">
+            <h4 class="titulo-modulo">
+                <span class="codigo-modulo" th:text="${m.codigo} ?: '--'">0485</span>
+                <span th:text="${m.nombre}">Programacion</span>
+            </h4>
+            <p class="ayuda">
+                <span th:text="${m.horasSemanales}">7</span> h/semana &middot;
+                <span th:text="${m.horasCentro}">195</span> h en el centro &middot;
+                <span th:text="${m.horasEmpresa}">45</span> h en la empresa
+            </p>
+
+            <div th:replace="~{fragments/layout :: detalleTemario(${m}, ${raPorModulo}, ${criteriosPorRa})}"></div>
+
+            <p class="ayuda" th:unless="${raPorModulo.containsKey(m.id)}">
+                Este modulo no tiene resultados de aprendizaje oficiales (es el modulo
+                optativo, que elige cada centro).
+            </p>
+        </article>
+    </section>
+</main>
+
+<footer class="pie">
+    <p>telosabes2026 &middot; Spring Boot 4 + Thymeleaf + MariaDB + Spring Security</p>
+</footer>
+
+</body>
+</html>

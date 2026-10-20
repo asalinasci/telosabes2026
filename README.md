@@ -135,12 +135,47 @@ comas de un Real Decreto a otro), por eso cada ciclo toma la fuente de su propio
 los módulos transversales se comparten entre ciclos. La relación es `@ManyToOne` desde el
 RA hacia el módulo, como en todo el proyecto: no hay ninguna `@OneToMany`.
 
+### Criterios de evaluación
+
+Cada resultado de aprendizaje tiene sus criterios de evaluación (las letras `a)`, `b)`,
+`c)`... de la tabla oficial) en la tabla `criterios` (clave ajena `criterios.ra_id` →
+`ras.id`, con `@ManyToOne` desde el criterio hacia su RA). Se dan de alta solos al arrancar
+(`CriteriosIniciales`, después de los RA) y se ven dentro del desplegable de cada RA en
+`/ciclos`. En total son **2912 criterios en los 373 RA** (1722 en DAM y 578 en SMR, porque
+los módulos transversales se comparten entre los cuatro ciclos y cada ciclo tiene sus
+propias filas).
+
+Los textos viven en `src/main/resources/criterios.txt`, generados junto con `ras.txt` por
+`python tools/generar_ras.py` (en el BOE van en la misma tabla). Cada línea es
+`GRUPO|CODIGO_MODULO|ORDEN_RA|ORDEN|TEXTO`, donde `ORDEN_RA` es el RA al que pertenecen
+(RA1, RA2...) y `ORDEN` la letra (1 = `a)`, 2 = `b)`, 3 = `c)`...). El criterio más largo
+ronda los 6000 caracteres, por eso las columnas de texto admiten 8000: se guardan literales,
+sin cortar.
+
+### Consulta de temario (`/modulos/estudio`)
+
+Para consultar los RA y los criterios con comodidad hay una pantalla propia,
+**`/modulos/estudio`** (enlace **Módulos** de la cabecera, y accesos desde el perfil, el
+panel del profesor y la portada). Está pensada para alumnos y profesores:
+
+- Se elige el ciclo con un desplegable. El alumno empieza viendo el ciclo que estudia y
+  puede cambiar a otro cuando quiera; el profesor y el administrador no tienen ciclo propio,
+  así que arrancan en el primero.
+- Los módulos van separados por curso, con su código, horas semanales y reparto de horas, y
+  todo el temario sale desplegado: los RA de cada módulo con los criterios de evaluación de
+  cada RA dentro.
+- El módulo optativo se distingue porque no tiene RA oficiales.
+
+Es una ruta para cualquier usuario con la sesión iniciada y reutiliza el mismo fragmento
+Thymeleaf que el catálogo público, así que `/ciclos` y `/modulos/estudio` muestran siempre el
+mismo temario.
+
 ## Control de acceso
 
 | Ruta | Acceso |
 |---|---|
 | `/`, `/login`, `/registro`, `/ciclos`, `/css/**` | Público |
-| `/perfil/**`, `/notas/**` | Cualquier usuario con sesión iniciada |
+| `/perfil/**`, `/notas/**`, `/modulos/estudio` | Cualquier usuario con sesión iniciada |
 | `/profesor/**` | `PROFESOR` y `ADMIN` |
 | `/admin/**` | Solo `ADMIN` |
 | `/acceso-denegado` | Página 403 |
@@ -175,11 +210,16 @@ telosabes2026/
 │   │   ├── Modulo.java               # entidad, con ciclo (FK a ciclos) y horas
 │   │   ├── ModuloRepository.java
 │   │   ├── ModulosIniciales.java     # alta automática de los módulos de cada ciclo
-│   │   └── ModuloController.java     # catálogo público /ciclos
+│   │   ├── ModuloController.java     # catálogo público /ciclos
+│   │   └── EstudioController.java    # consulta de RA y criterios /modulos/estudio
 │   ├── ra/                           # resultados de aprendizaje (tabla "ras")
 │   │   ├── RA.java                   # entidad: orden, texto oficial y FK a modulos
 │   │   ├── RaRepository.java
 │   │   └── RasIniciales.java         # alta automática de los 373 RA (idempotente)
+│   ├── criterio/                     # criterios de evaluación (tabla "criterios")
+│   │   ├── Criterio.java             # entidad: orden (letra), texto y FK al RA
+│   │   ├── CriterioRepository.java
+│   │   └── CriteriosIniciales.java   # alta automática de los 2912 criterios
 │   ├── nota/                         # ejemplo CRUD completo (tabla "notas")
 │   │   ├── Nota.java                 # entidad, con autor (FK a usuarios)
 │   │   ├── NotaForm.java             # formulario: sin campo de autor
@@ -207,6 +247,7 @@ telosabes2026/
 │   ├── application.properties        # configuración (incluye MariaDB)
 │   ├── application-prod.properties   # perfil de producción (VPS + Nginx)
 │   ├── ras.txt                       # RA oficiales (lo genera tools/generar_ras.py)
+│   ├── criterios.txt                 # criterios de evaluación (mismo generador)
 │   ├── static/css/estilos.css
 │   └── templates/
 │       ├── index.html
@@ -219,11 +260,14 @@ telosabes2026/
 │       ├── usuario/perfil.html       # "Mi perfil": datos y cambio de ciclo
 │       ├── profesor/panel.html
 │       ├── modulos/lista.html        # catálogo de ciclos, módulos y sus RA
+│       ├── modulos/estudio.html      # temario por ciclo para alumnos y profesores
 │       └── notas/lista.html
 ├── src/test/java/.../seguridad/SeguridadTests.java   # 14 pruebas de seguridad
 ├── src/test/java/.../ciclo/CicloTests.java           # 6 pruebas de ciclos y del registro
 ├── src/test/java/.../modulo/ModuloTests.java         # 6 pruebas de los módulos
 ├── src/test/java/.../ra/RaTests.java                 # 6 pruebas de los RA de cada módulo
+├── src/test/java/.../criterio/CriterioTests.java      # 6 pruebas de los criterios de evaluación
+├── src/test/java/.../modulo/EstudioTests.java         # 7 pruebas del temario para alumnos y profesores
 ├── src/test/java/.../admin/AdminUsuariosTests.java   # 9 pruebas de la zona del administrador
 ├── src/test/java/.../usuario/PerfilTests.java        # 7 pruebas del perfil y su ciclo
 ├── src/test/java/.../nota/NotaTests.java             # 5 pruebas del autor de las notas
@@ -414,7 +458,7 @@ como autor de cada nota:
 
 ```bash
 mvnw.cmd clean package      # genera el .jar en target/
-mvnw.cmd test               # 54 pruebas (usan H2, no necesitan MariaDB)
+mvnw.cmd test               # 67 pruebas (usan H2, no necesitan MariaDB)
 ```
 
 Pruebas incluidas en `SeguridadTests`:
