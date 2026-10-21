@@ -196,6 +196,8 @@ telosabes2026/
 │   ├── telosabes2026.service         # unidad de systemd
 │   ├── telosabes2026-copia.service   # unidad de copia (una sola vez)
 │   ├── telosabes2026-copia.timer     # ejecuta la copia una vez al día
+│   ├── configurar-ssh.sh             # acceso SSH (clave para todos, contraseña solo root)
+│   ├── ssh-00-telosabes.conf         # configuración de sshd que aplica el anterior
 │   └── nginx-telosabes2026.conf      # Nginx como reverse proxy
 ├── tools/
 │   └── generar_ras.py                # regenera ras.txt a partir del BOE
@@ -369,6 +371,9 @@ DB_PASSWORD='una-clave-larga-y-aleatoria' ./instalar.sh /root/despliegue/telosab
 
 # 4. Crear el administrador (cuando la aplicación ya ha arrancado una vez)
 ./crear-admin.sh correo@ejemplo.com 'ClaveSecreta1!' "Administrador"
+
+# 5. Acceso SSH: clave para todos y contraseña solo para root
+./configurar-ssh.sh
 ```
 
 El script se puede ejecutar **varias veces**: instala lo que falte, actualiza el JAR y
@@ -425,7 +430,8 @@ systemctl list-timers telosabes2026-copia.timer   # cuándo es la próxima copia
 3. **Bajar el TTL** del registro A (a 300) un par de horas antes.
 4. **Cambiar el registro A** a la IP nueva (Hostytec → Zona DNS).
 5. **Certificado**: `certbot --nginx -d midominio.com -d www.midominio.com --redirect`,
-   y volver a instalar fail2ban y el acceso SSH solo por clave en la nueva.
+   y volver a instalar fail2ban y el acceso SSH como en esta VPS (clave para todos, y
+   contraseña solo para `root` si se quiere).
 6. Dejar la VPS vieja unos días por si acaso y luego cancelarla.
 
 Para los usuarios lo único que se nota es un salto de unos minutos (propagación del DNS)
@@ -438,8 +444,12 @@ y el tener que volver a iniciar sesión.
 - Sin dominio no hay HTTPS: mientras el sitio vaya por `http://`, las contraseñas viajan
   sin cifrar. Cuando se tenga un dominio apuntando a la IP, se puede añadir HTTPS gratis
   con Certbot (`apt install certbot python3-certbot-nginx` y `certbot --nginx`).
-- Conviene entrar por **clave SSH** y quitar el acceso por contraseña
-  (`PasswordAuthentication no` en `/etc/ssh/sshd_config`).
+- Conviene entrar por **clave SSH**. En esta VPS el acceso por contraseña está permitido
+  **solo para `root`**; el resto de usuarios tienen que usar la clave. Se configura en
+  `/etc/ssh/sshd_config.d/00-telosabes.conf` (con un bloque `Match User root` al final),
+  que se carga antes que el de cloud-init y por eso manda. Para volver a prohibirlo del
+  todo, basta con quitar el bloque `Match` y poner `PermitRootLogin prohibit-password`,
+  validar con `sshd -t` y recargar con `systemctl reload ssh`.
 
 ## El autor de las notas
 
