@@ -170,6 +170,32 @@ Es una ruta para cualquier usuario con la sesión iniciada y reutiliza el mismo 
 Thymeleaf que el catálogo público, así que `/ciclos` y `/modulos/estudio` muestran siempre el
 mismo temario.
 
+### Preguntas
+
+Cada criterio de evaluación puede tener preguntas para comprobar si el alumno lo ha
+adquirido, en la tabla `preguntas` (clave ajena `preguntas.criterio_id` → `criterios.id`,
+con `@ManyToOne` desde la pregunta hacia su criterio). La entidad `Pregunta` tiene:
+
+| Campo | Para qué sirve |
+|---|---|
+| `enunciado` | Texto de la pregunta (obligatorio, hasta 2000 caracteres) |
+| `respuesta1` … `respuesta4` | Las cuatro respuestas posibles (solo en las de test) |
+| `correcta` | Número de la respuesta correcta: 1 a 4 (solo en las de test) |
+| `tipo` | `TEST` (cuatro respuestas) o `TEXTO` (la escribe el alumno) |
+| `aciertos` / `errores` | Contadores de respuestas acertadas y falladas, empiezan en 0 |
+
+Las preguntas de **test** guardan siempre las cuatro respuestas y la correcta; las de
+**texto** no llevan respuestas ni correcta, y esa coherencia se valida con `@AssertTrue`
+(`isTestBienFormada`). Para crear una pregunta hay dos constructores: uno de texto
+(`new Pregunta(enunciado, criterio)`) y otro de test
+(`new Pregunta(enunciado, criterio, r1, r2, r3, r4, correcta)`). La entidad ofrece además
+`getRespuestas()`, `getRespuestaCorrecta()` y `getLetraCorrecta()` (`a)`, `b)`, `c)`, `d)`)
+para mostrarla sin repetir lógica en las plantillas.
+
+Los contadores no se tocan al dar de alta la pregunta: se irán sumando cuando los alumnos
+la contesten. Todavía no hay datos iniciales ni pantalla de preguntas: la tabla se crea sola
+al arrancar (`spring.jpa.hibernate.ddl-auto=update`).
+
 ## Control de acceso
 
 | Ruta | Acceso |
@@ -222,6 +248,10 @@ telosabes2026/
 │   │   ├── Criterio.java             # entidad: orden (letra), texto y FK al RA
 │   │   ├── CriterioRepository.java
 │   │   └── CriteriosIniciales.java   # alta automática de los 2912 criterios
+│   ├── pregunta/                     # preguntas de cada criterio (tabla "preguntas")
+│   │   ├── Pregunta.java             # entidad: enunciado, respuestas, correcta y contadores
+│   │   ├── TipoPregunta.java         # TEST (cuatro respuestas) o TEXTO
+│   │   └── PreguntaRepository.java
 │   ├── nota/                         # ejemplo CRUD completo (tabla "notas")
 │   │   ├── Nota.java                 # entidad, con autor (FK a usuarios)
 │   │   ├── NotaForm.java             # formulario: sin campo de autor
@@ -270,6 +300,7 @@ telosabes2026/
 ├── src/test/java/.../ra/RaTests.java                 # 6 pruebas de los RA de cada módulo
 ├── src/test/java/.../criterio/CriterioTests.java      # 6 pruebas de los criterios de evaluación
 ├── src/test/java/.../modulo/EstudioTests.java         # 7 pruebas del temario para alumnos y profesores
+├── src/test/java/.../pregunta/PreguntaTests.java      # 7 pruebas de las preguntas de cada criterio
 ├── src/test/java/.../admin/AdminUsuariosTests.java   # 9 pruebas de la zona del administrador
 ├── src/test/java/.../usuario/PerfilTests.java        # 7 pruebas del perfil y su ciclo
 ├── src/test/java/.../nota/NotaTests.java             # 5 pruebas del autor de las notas
@@ -468,7 +499,7 @@ como autor de cada nota:
 
 ```bash
 mvnw.cmd clean package      # genera el .jar en target/
-mvnw.cmd test               # 67 pruebas (usan H2, no necesitan MariaDB)
+mvnw.cmd test               # 74 pruebas (usan H2, no necesitan MariaDB)
 ```
 
 Pruebas incluidas en `SeguridadTests`:
