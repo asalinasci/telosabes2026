@@ -25,18 +25,18 @@ public interface PreguntaRepository extends JpaRepository<Pregunta, Long> {
 
     /** Todas las preguntas con su criterio, de la más reciente a la más antigua. */
     @EntityGraph(attributePaths = {"criterio", "criterio.ra", "criterio.ra.modulo",
-            "criterio.ra.modulo.ciclo"})
+            "criterio.ra.modulo.ciclo", "autor"})
     List<Pregunta> findAllByOrderByIdDesc();
 
-    /** Todas las preguntas con su criterio, para recorrerlas sin precarga. */
+    /** Todas las preguntas con su criterio y su autor, sin precarga perezosa. */
     @EntityGraph(attributePaths = {"criterio", "criterio.ra", "criterio.ra.modulo",
-            "criterio.ra.modulo.ciclo"})
+            "criterio.ra.modulo.ciclo", "autor"})
     List<Pregunta> findAllByOrderByIdAsc();
 
     /** Una pregunta con toda su ruta hasta el ciclo, para el formulario de edición. */
     @Override
     @EntityGraph(attributePaths = {"criterio", "criterio.ra", "criterio.ra.modulo",
-            "criterio.ra.modulo.ciclo"})
+            "criterio.ra.modulo.ciclo", "autor"})
     Optional<Pregunta> findById(Long id);
 
     /** Cantidad de preguntas de un criterio. */

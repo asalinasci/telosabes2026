@@ -8,6 +8,10 @@ import com.telosabes.telosabes2026.modulo.Modulo;
 import com.telosabes.telosabes2026.modulo.ModuloRepository;
 import com.telosabes.telosabes2026.ra.RA;
 import com.telosabes.telosabes2026.ra.RaRepository;
+import com.telosabes.telosabes2026.seguridad.Rol;
+import com.telosabes.telosabes2026.usuario.Usuario;
+import com.telosabes.telosabes2026.usuario.UsuarioRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,6 +62,19 @@ class PreguntaCrudTests {
     @Autowired
     private CicloRepository cicloRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    private Usuario profesor;
+
+    @BeforeEach
+    void crearUsuariosDePrueba() {
+        profesor = usuarioRepository.save(new Usuario(
+                "Profesor de prueba", "profe@ejemplo.com", "hash-de-prueba", Rol.PROFESOR));
+        usuarioRepository.save(new Usuario(
+                "Administrador de prueba", "admin@ejemplo.com", "hash-de-prueba", Rol.ADMIN));
+    }
+
     @Test
     void elAlumnoNoPuedeEntrarEnElCrud() throws Exception {
         mockMvc.perform(get("/profesor/preguntas")
@@ -80,7 +97,7 @@ class PreguntaCrudTests {
     @Test
     void elProfesorYElAdministradorVenElListado() throws Exception {
         Pregunta guardada = preguntaRepository.saveAndFlush(new Pregunta(
-                "¿Que estructura permite repetir instrucciones?", criterio(),
+                "¿Que estructura permite repetir instrucciones?", criterio(), profesor,
                 "Una condicion", "Un bucle", "Una funcion", "Un comentario", 2));
 
         mockMvc.perform(get("/profesor/preguntas")
@@ -89,6 +106,7 @@ class PreguntaCrudTests {
                 .andExpect(view().name("preguntas/lista"))
                 .andExpect(model().attributeExists("preguntas"))
                 .andExpect(content().string(containsString("¿Que estructura permite repetir instrucciones?")))
+                .andExpect(content().string(containsString("Profesor de prueba")))
                 .andExpect(content().string(containsString("b)")));
 
         mockMvc.perform(get("/profesor/preguntas")
@@ -122,6 +140,7 @@ class PreguntaCrudTests {
         Pregunta creada = buscarPorEnunciado("¿Que es una variable?");
         assertThat(creada.getTipo()).isEqualTo(TipoPregunta.TEST);
         assertThat(creada.getCriterio().getId()).isEqualTo(criterio.getId());
+        assertThat(creada.getAutor().getEmail()).isEqualTo("profe@ejemplo.com");
         assertThat(creada.getRespuestaCorrecta()).isEqualTo("Un espacio en memoria con nombre");
         assertThat(creada.getAciertos()).isZero();
         assertThat(creada.getErrores()).isZero();
@@ -188,7 +207,7 @@ class PreguntaCrudTests {
     @Test
     void elProfesorEditaUnaPregunta() throws Exception {
         Pregunta pregunta = preguntaRepository.saveAndFlush(new Pregunta(
-                "Enunciado original", criterio(), "a", "b", "c", "d", 1));
+                "Enunciado original", criterio(), profesor, "a", "b", "c", "d", 1));
 
         mockMvc.perform(get("/profesor/preguntas/{id}/editar", pregunta.getId())
                         .with(user("profe@ejemplo.com").roles("PROFESOR")))
@@ -212,12 +231,14 @@ class PreguntaCrudTests {
         assertThat(actualizada.getTipo()).isEqualTo(TipoPregunta.TEXTO);
         assertThat(actualizada.getRespuestas()).isEmpty();
         assertThat(actualizada.getCorrecta()).isNull();
+        // El autor se conserva al editar.
+        assertThat(actualizada.getAutor().getId()).isEqualTo(profesor.getId());
     }
 
     @Test
     void elProfesorEliminaUnaPregunta() throws Exception {
         Pregunta pregunta = preguntaRepository.saveAndFlush(new Pregunta(
-                "Pregunta que se va a borrar", criterio(), "a", "b", "c", "d", 4));
+                "Pregunta que se va a borrar", criterio(), profesor, "a", "b", "c", "d", 4));
 
         mockMvc.perform(post("/profesor/preguntas/{id}/eliminar", pregunta.getId())
                         .with(csrf())

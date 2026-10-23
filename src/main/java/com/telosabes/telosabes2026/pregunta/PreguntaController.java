@@ -4,8 +4,11 @@ import com.telosabes.telosabes2026.criterio.Criterio;
 import com.telosabes.telosabes2026.criterio.CriterioRepository;
 import com.telosabes.telosabes2026.modulo.Modulo;
 import com.telosabes.telosabes2026.modulo.ModuloRepository;
+import com.telosabes.telosabes2026.seguridad.UsuarioActual;
+import com.telosabes.telosabes2026.usuario.Usuario;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,13 +45,16 @@ public class PreguntaController {
     private final PreguntaRepository preguntaRepository;
     private final CriterioRepository criterioRepository;
     private final ModuloRepository moduloRepository;
+    private final UsuarioActual usuarioActual;
 
     public PreguntaController(PreguntaRepository preguntaRepository,
                               CriterioRepository criterioRepository,
-                              ModuloRepository moduloRepository) {
+                              ModuloRepository moduloRepository,
+                              UsuarioActual usuarioActual) {
         this.preguntaRepository = preguntaRepository;
         this.criterioRepository = criterioRepository;
         this.moduloRepository = moduloRepository;
+        this.usuarioActual = usuarioActual;
     }
 
     /** Listado de todas las preguntas, de la más reciente a la más antigua. */
@@ -77,6 +83,7 @@ public class PreguntaController {
     @PostMapping
     public String guardar(@Valid @ModelAttribute("preguntaForm") PreguntaForm formulario,
                           BindingResult resultado,
+                          Authentication autenticacion,
                           Model model,
                           RedirectAttributes flash) {
         Criterio criterio = resolverCriterio(formulario.getCriterioId(), resultado);
@@ -86,7 +93,9 @@ public class PreguntaController {
             return VISTA_FORMULARIO;
         }
 
-        preguntaRepository.save(formulario.aPregunta(criterio));
+        // El autor sale de la sesion, nunca del formulario.
+        Usuario autor = usuarioActual.requerido(autenticacion);
+        preguntaRepository.save(formulario.aPregunta(criterio, autor));
         flash.addFlashAttribute("mensaje", "Pregunta creada correctamente.");
         return "redirect:/profesor/preguntas";
     }
@@ -97,6 +106,7 @@ public class PreguntaController {
         Pregunta pregunta = buscar(id);
 
         model.addAttribute("preguntaForm", PreguntaForm.desde(pregunta));
+        model.addAttribute("pregunta", pregunta);
         prepararFormulario(model, id);
         return VISTA_FORMULARIO;
     }
@@ -112,10 +122,12 @@ public class PreguntaController {
         Criterio criterio = resolverCriterio(formulario.getCriterioId(), resultado);
 
         if (resultado.hasErrors()) {
+            model.addAttribute("pregunta", pregunta);
             prepararFormulario(model, id);
             return VISTA_FORMULARIO;
         }
 
+        // El autor no cambia al editar: se conserva el de la pregunta original.
         formulario.aplicarA(pregunta, criterio);
         preguntaRepository.save(pregunta);
         flash.addFlashAttribute("mensaje", "Pregunta actualizada correctamente.");

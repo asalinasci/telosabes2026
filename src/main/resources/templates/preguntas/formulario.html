@@ -13,6 +13,12 @@
     <div th:replace="~{fragments/layout :: avisos}"></div>
 
     <section class="panel">
+        <p class="ayuda" th:if="${pregunta != null}">
+            Autor: <strong th:text="${pregunta.autor.nombre}">Nombre del autor</strong>
+            <span class="etiqueta-rol-tabla" th:text="${pregunta.autor.rol.etiqueta}">Rol</span>
+            &middot; el autor no cambia al editar.
+        </p>
+
         <form th:action="${preguntaId == null} ? @{/profesor/preguntas} : @{/profesor/preguntas/{id}(id=${preguntaId})}"
               th:object="${preguntaForm}" method="post">
 

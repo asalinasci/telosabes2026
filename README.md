@@ -182,6 +182,7 @@ con `@ManyToOne` desde la pregunta hacia su criterio). La entidad `Pregunta` tie
 | `respuesta1` … `respuesta4` | Las cuatro respuestas posibles (solo en las de test) |
 | `correcta` | Número de la respuesta correcta: 1 a 4 (solo en las de test) |
 | `tipo` | `TEST` (cuatro respuestas) o `TEXTO` (la escribe el alumno) |
+| `autor` | Usuario que creó la pregunta (FK a `usuarios`); se toma de la sesión |
 | `aciertos` / `errores` | Contadores de respuestas acertadas y falladas, empiezan en 0 |
 
 Las preguntas de **test** guardan siempre las cuatro respuestas y la correcta; las de
@@ -207,6 +208,10 @@ El CRUD está en **`/profesor/preguntas`** y solo lo pueden usar los roles `PROF
 | `GET /profesor/preguntas/{id}/editar` | Formulario de edición |
 | `POST /profesor/preguntas/{id}` | Guarda los cambios |
 | `POST /profesor/preguntas/{id}/eliminar` | Borra la pregunta |
+
+El autor de la pregunta **no viene del formulario**: se toma del usuario que tiene la sesión
+iniciada al crearla (igual que en las notas) y no cambia al editar. Así nadie puede hacer
+pasar una pregunta por suya.
 
 El formulario elige el criterio con un desplegable agrupado por módulo (hay miles de
 criterios) y un filtro de texto. Al cambiar el tipo a `TEXTO` se ocultan las respuestas y,
@@ -267,7 +272,7 @@ telosabes2026/
 │   │   ├── CriterioRepository.java
 │   │   └── CriteriosIniciales.java   # alta automática de los 2912 criterios
 │   ├── pregunta/                     # preguntas de cada criterio (tabla "preguntas")
-│   │   ├── Pregunta.java             # entidad: enunciado, respuestas, correcta y contadores
+│   │   ├── Pregunta.java             # entidad: enunciado, respuestas, autor y contadores
 │   │   ├── TipoPregunta.java         # TEST (cuatro respuestas) o TEXTO
 │   │   ├── PreguntaForm.java         # formulario: criterio, tipo, enunciado y respuestas
 │   │   ├── PreguntaRepository.java

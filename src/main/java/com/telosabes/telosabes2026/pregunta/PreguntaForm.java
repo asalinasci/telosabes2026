@@ -1,6 +1,7 @@
 package com.telosabes.telosabes2026.pregunta;
 
 import com.telosabes.telosabes2026.criterio.Criterio;
+import com.telosabes.telosabes2026.usuario.Usuario;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -72,10 +73,11 @@ public class PreguntaForm {
         return formulario;
     }
 
-    /** Crea una pregunta nueva con los datos del formulario. */
-    public Pregunta aPregunta(Criterio criterio) {
+    /** Crea una pregunta nueva con los datos del formulario y su autor. */
+    public Pregunta aPregunta(Criterio criterio, Usuario autor) {
         Pregunta pregunta = new Pregunta();
         aplicarA(pregunta, criterio);
+        pregunta.setAutor(autor);
         return pregunta;
     }
 

@@ -43,6 +43,7 @@
             <tr>
                 <th>#</th>
                 <th>Pregunta</th>
+                <th>Autor</th>
                 <th>Criterio</th>
                 <th>Correcta</th>
                 <th>Aciertos</th>
@@ -57,6 +58,12 @@
                     <span class="etiqueta-tipo" th:text="${p.tipo.etiqueta}">Test</span>
                     <span th:text="${#strings.abbreviate(p.enunciado, 120)}"
                           th:title="${p.enunciado}">Enunciado de la pregunta</span>
+                </td>
+                <td>
+                    <span th:if="${p.autor != null}" th:text="${p.autor.nombre}">Nombre del autor</span>
+                    <span th:unless="${p.autor != null}" class="ayuda">Sin autor</span>
+                    <span th:if="${p.autor != null}" class="etiqueta-rol-tabla"
+                          th:text="${p.autor.rol.etiqueta}">Rol</span>
                 </td>
                 <td>
                     <span class="codigo-criterio"

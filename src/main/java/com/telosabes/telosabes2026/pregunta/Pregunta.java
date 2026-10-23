@@ -1,6 +1,7 @@
 package com.telosabes.telosabes2026.pregunta;
 
 import com.telosabes.telosabes2026.criterio.Criterio;
+import com.telosabes.telosabes2026.usuario.Usuario;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -40,6 +41,9 @@ import java.util.List;
  * Los contadores {@code aciertos} y {@code errores} empiezan en cero y no se
  * tocan al dar de alta la pregunta: se irán sumando cuando los alumnos la
  * contesten.
+ *
+ * El autor es el usuario que tenía la sesión iniciada al crear la pregunta. Se
+ * rellena siempre en el controlador, nunca desde el formulario.
  *
  * Al igual que en el resto del proyecto, la relación es {@code @ManyToOne}
  * desde la pregunta hacia su criterio: no hay {@code @OneToMany} en
@@ -94,6 +98,15 @@ public class Pregunta {
             foreignKey = @ForeignKey(name = "fk_pregunta_criterio"))
     private Criterio criterio;
 
+    /**
+     * Autor de la pregunta: el usuario que tenía la sesión iniciada al
+     * crearla. No se puede cambiar desde el formulario.
+     */
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "autor_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_pregunta_autor"))
+    private Usuario autor;
+
     /** Test (cuatro respuestas) o texto (la escribe el alumno). */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
@@ -114,18 +127,20 @@ public class Pregunta {
     }
 
     /** Pregunta de texto: el alumno escribe la respuesta. */
-    public Pregunta(String enunciado, Criterio criterio) {
+    public Pregunta(String enunciado, Criterio criterio, Usuario autor) {
         this.enunciado = enunciado;
         this.criterio = criterio;
+        this.autor = autor;
         this.tipo = TipoPregunta.TEXTO;
     }
 
     /** Pregunta de test con sus cuatro respuestas y la correcta (1 a 4). */
-    public Pregunta(String enunciado, Criterio criterio,
+    public Pregunta(String enunciado, Criterio criterio, Usuario autor,
                     String respuesta1, String respuesta2, String respuesta3, String respuesta4,
                     Integer correcta) {
         this.enunciado = enunciado;
         this.criterio = criterio;
+        this.autor = autor;
         this.respuesta1 = respuesta1;
         this.respuesta2 = respuesta2;
         this.respuesta3 = respuesta3;
@@ -254,6 +269,14 @@ public class Pregunta {
 
     public void setCriterio(Criterio criterio) {
         this.criterio = criterio;
+    }
+
+    public Usuario getAutor() {
+        return autor;
+    }
+
+    public void setAutor(Usuario autor) {
+        this.autor = autor;
     }
 
     public TipoPregunta getTipo() {
