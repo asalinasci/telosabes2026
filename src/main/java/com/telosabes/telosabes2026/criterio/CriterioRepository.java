@@ -18,7 +18,7 @@ public interface CriterioRepository extends JpaRepository<Criterio, Long> {
     List<Criterio> findByRaIdOrderByOrdenAsc(Long raId);
 
     /** Todos los criterios con su RA, agrupables por RA. */
-    @EntityGraph(attributePaths = "ra")
+    @EntityGraph(attributePaths = {"ra", "ra.modulo", "ra.modulo.ciclo"})
     List<Criterio> findAllByOrderByRaIdAscOrdenAsc();
 
     /** Cantidad de criterios de un RA (ningún RA oficial se queda sin ellos). */

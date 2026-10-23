@@ -193,8 +193,26 @@ Las preguntas de **test** guardan siempre las cuatro respuestas y la correcta; l
 para mostrarla sin repetir lógica en las plantillas.
 
 Los contadores no se tocan al dar de alta la pregunta: se irán sumando cuando los alumnos
-la contesten. Todavía no hay datos iniciales ni pantalla de preguntas: la tabla se crea sola
-al arrancar (`spring.jpa.hibernate.ddl-auto=update`).
+la contesten. No hay datos iniciales: la tabla se crea sola al arrancar
+(`spring.jpa.hibernate.ddl-auto=update`).
+
+El CRUD está en **`/profesor/preguntas`** y solo lo pueden usar los roles `PROFESOR` y
+`ADMIN` (la regla `/profesor/**` de `SecurityConfig` deja fuera a los alumnos):
+
+| Ruta | Acción |
+|---|---|
+| `GET /profesor/preguntas` | Listado con el criterio, la respuesta correcta y los contadores |
+| `GET /profesor/preguntas/nueva` | Formulario de alta |
+| `POST /profesor/preguntas` | Guarda la pregunta nueva |
+| `GET /profesor/preguntas/{id}/editar` | Formulario de edición |
+| `POST /profesor/preguntas/{id}` | Guarda los cambios |
+| `POST /profesor/preguntas/{id}/eliminar` | Borra la pregunta |
+
+El formulario elige el criterio con un desplegable agrupado por módulo (hay miles de
+criterios) y un filtro de texto. Al cambiar el tipo a `TEXTO` se ocultan las respuestas y,
+aunque el navegador las envíe, el controlador las vacía antes de guardar. La validación
+cruzada (`PreguntaForm.isTestBienFormada`) impide guardar un test sin sus cuatro respuestas
+y su correcta.
 
 ## Control de acceso
 
@@ -251,7 +269,9 @@ telosabes2026/
 │   ├── pregunta/                     # preguntas de cada criterio (tabla "preguntas")
 │   │   ├── Pregunta.java             # entidad: enunciado, respuestas, correcta y contadores
 │   │   ├── TipoPregunta.java         # TEST (cuatro respuestas) o TEXTO
-│   │   └── PreguntaRepository.java
+│   │   ├── PreguntaForm.java         # formulario: criterio, tipo, enunciado y respuestas
+│   │   ├── PreguntaRepository.java
+│   │   └── PreguntaController.java   # CRUD /profesor/preguntas (profesor y admin)
 │   ├── nota/                         # ejemplo CRUD completo (tabla "notas")
 │   │   ├── Nota.java                 # entidad, con autor (FK a usuarios)
 │   │   ├── NotaForm.java             # formulario: sin campo de autor
@@ -291,6 +311,8 @@ telosabes2026/
 │       ├── admin/editar-usuario.html # editar nombre, correo y ciclo
 │       ├── usuario/perfil.html       # "Mi perfil": datos y cambio de ciclo
 │       ├── profesor/panel.html
+│       ├── preguntas/lista.html      # listado de preguntas (profesor y admin)
+│       ├── preguntas/formulario.html # alta y edición de una pregunta
 │       ├── modulos/lista.html        # catálogo de ciclos, módulos y sus RA
 │       ├── modulos/estudio.html      # temario por ciclo para alumnos y profesores
 │       └── notas/lista.html
@@ -301,6 +323,7 @@ telosabes2026/
 ├── src/test/java/.../criterio/CriterioTests.java      # 6 pruebas de los criterios de evaluación
 ├── src/test/java/.../modulo/EstudioTests.java         # 7 pruebas del temario para alumnos y profesores
 ├── src/test/java/.../pregunta/PreguntaTests.java      # 7 pruebas de las preguntas de cada criterio
+├── src/test/java/.../pregunta/PreguntaCrudTests.java  # 10 pruebas del CRUD de preguntas
 ├── src/test/java/.../admin/AdminUsuariosTests.java   # 9 pruebas de la zona del administrador
 ├── src/test/java/.../usuario/PerfilTests.java        # 7 pruebas del perfil y su ciclo
 ├── src/test/java/.../nota/NotaTests.java             # 5 pruebas del autor de las notas
@@ -499,7 +522,7 @@ como autor de cada nota:
 
 ```bash
 mvnw.cmd clean package      # genera el .jar en target/
-mvnw.cmd test               # 74 pruebas (usan H2, no necesitan MariaDB)
+mvnw.cmd test               # 84 pruebas (usan H2, no necesitan MariaDB)
 ```
 
 Pruebas incluidas en `SeguridadTests`:

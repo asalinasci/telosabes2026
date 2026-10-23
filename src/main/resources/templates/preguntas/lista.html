@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Preguntas')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: cabecera}"></header>
+
+<main class="contenedor">
+    <div class="cabecera-seccion">
+        <h2>Preguntas</h2>
+        <a class="boton" th:href="@{/profesor/preguntas/nueva}">Nueva pregunta</a>
+    </div>
+    <p class="ayuda">Preguntas de test y de texto asociadas a los criterios de evaluacion.
+        Solo pueden gestionarlas los profesores y el administrador.</p>
+
+    <div th:replace="~{fragments/layout :: avisos}"></div>
+
+    <div class="tarjetas">
+        <div class="tarjeta">
+            <h3 th:text="${totalPreguntas}">0</h3>
+            <p>Preguntas</p>
+        </div>
+        <div class="tarjeta">
+            <h3 th:text="${totalTest}">0</h3>
+            <p>De test</p>
+        </div>
+        <div class="tarjeta">
+            <h3 th:text="${totalTexto}">0</h3>
+            <p>De texto</p>
+        </div>
+    </div>
+
+    <section class="panel">
+        <h3>Listado</h3>
+
+        <p th:if="${#lists.isEmpty(preguntas)}">
+            Todavia no hay preguntas.
+            <a th:href="@{/profesor/preguntas/nueva}">Crea la primera</a>.
+        </p>
+
+        <table th:unless="${#lists.isEmpty(preguntas)}">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Pregunta</th>
+                <th>Criterio</th>
+                <th>Correcta</th>
+                <th>Aciertos</th>
+                <th>Errores</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${preguntas}">
+                <td th:text="${p.id}">1</td>
+                <td>
+                    <span class="etiqueta-tipo" th:text="${p.tipo.etiqueta}">Test</span>
+                    <span th:text="${#strings.abbreviate(p.enunciado, 120)}"
+                          th:title="${p.enunciado}">Enunciado de la pregunta</span>
+                </td>
+                <td>
+                    <span class="codigo-criterio"
+                          th:text="|${p.criterio.ra.modulo.ciclo.siglas} · ${p.criterio.ra.modulo.codigo} · ${p.criterio.ra.codigo} · ${p.criterio.letra}|">DAM · 0485 · RA1 · a)</span>
+                    <div class="ayuda texto-criterio"
+                         th:text="${#strings.abbreviate(p.criterio.descripcion, 90)}"
+                         th:title="${p.criterio.descripcion}">Texto del criterio</div>
+                </td>
+                <td>
+                    <span th:if="${p.tipo.name() == 'TEST'}">
+                        <span th:text="${p.letraCorrecta}">a)</span>
+                        <span th:text="${#strings.abbreviate(p.respuestaCorrecta, 50)}"
+                              th:title="${p.respuestaCorrecta}">Respuesta correcta</span>
+                    </span>
+                    <span th:if="${p.tipo.name() == 'TEXTO'}" class="ayuda">La escribe el alumno</span>
+                </td>
+                <td th:text="${p.aciertos}">0</td>
+                <td th:text="${p.errores}">0</td>
+                <td>
+                    <div class="fila-acciones">
+                        <a class="boton mini" th:href="@{/profesor/preguntas/{id}/editar(id=${p.id})}">Editar</a>
+                        <form th:action="@{/profesor/preguntas/{id}/eliminar(id=${p.id})}" method="post"
+                              onsubmit="return confirm('¿Seguro que quieres eliminar esta pregunta?');">
+                            <button class="boton peligro" type="submit">Eliminar</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <p class="acciones">
+        <a class="boton secundario" th:href="@{/profesor}">Volver al panel del profesor</a>
+    </p>
+</main>
+
+<footer class="pie">
+    <p>telosabes2026 &middot; Spring Boot 4 + Thymeleaf + MariaDB + Spring Security</p>
+</footer>
+
+</body>
+</html>

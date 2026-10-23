@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Pregunta')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: cabecera}"></header>
+
+<main class="contenedor">
+    <h2 th:text="${preguntaId == null ? 'Nueva pregunta' : 'Editar pregunta'}">Nueva pregunta</h2>
+    <p class="ayuda">La pregunta se asocia a un criterio de evaluacion oficial. Las de test
+        llevan cuatro respuestas y una correcta; las de texto las contesta el alumno.</p>
+
+    <div th:replace="~{fragments/layout :: avisos}"></div>
+
+    <section class="panel">
+        <form th:action="${preguntaId == null} ? @{/profesor/preguntas} : @{/profesor/preguntas/{id}(id=${preguntaId})}"
+              th:object="${preguntaForm}" method="post">
+
+            <label>Tipo de pregunta *</label>
+            <div class="opciones-tipo">
+                <label class="opcion-radio" th:each="t : ${tipos}">
+                    <input type="radio" th:field="*{tipo}" th:value="${t}">
+                    <span th:text="${t.etiqueta}">Test</span>
+                </label>
+            </div>
+            <p class="error-campo" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}">Error</p>
+
+            <label for="filtroCriterio">Criterio de evaluacion *</label>
+            <input type="text" id="filtroCriterio" class="filtro-criterio"
+                   placeholder="Filtra por modulo, RA o texto del criterio...">
+            <select id="criterioId" th:field="*{criterioId}"
+                    th:classappend="${#fields.hasErrors('criterioId')} ? 'con-error'">
+                <option value="">Elige un criterio</option>
+                <optgroup th:each="modulo : ${criteriosPorModulo}"
+                          th:label="|${modulo.key.ciclo.siglas} · ${modulo.key.codigo} · ${modulo.key.nombre}|">
+                    <option th:each="c : ${modulo.value}" th:value="${c.id}"
+                            th:text="|${c.ra.codigo} · ${c.letra} ${#strings.abbreviate(c.descripcion, 90)}|">RA1 · a) Criterio</option>
+                </optgroup>
+            </select>
+            <p class="error-campo" th:if="${#fields.hasErrors('criterioId')}" th:errors="*{criterioId}">Error</p>
+
+            <label for="enunciado">Enunciado *</label>
+            <textarea id="enunciado" th:field="*{enunciado}" rows="4" maxlength="2000"
+                      th:classappend="${#fields.hasErrors('enunciado')} ? 'con-error'"></textarea>
+            <p class="error-campo" th:if="${#fields.hasErrors('enunciado')}" th:errors="*{enunciado}">Error</p>
+
+            <div id="bloque-respuestas">
+                <h3>Respuestas (solo preguntas de test)</h3>
+
+                <label for="respuesta1">Respuesta 1 *</label>
+                <input type="text" id="respuesta1" th:field="*{respuesta1}" maxlength="500">
+
+                <label for="respuesta2">Respuesta 2 *</label>
+                <input type="text" id="respuesta2" th:field="*{respuesta2}" maxlength="500">
+
+                <label for="respuesta3">Respuesta 3 *</label>
+                <input type="text" id="respuesta3" th:field="*{respuesta3}" maxlength="500">
+
+                <label for="respuesta4">Respuesta 4 *</label>
+                <input type="text" id="respuesta4" th:field="*{respuesta4}" maxlength="500">
+
+                <label for="correcta">Respuesta correcta *</label>
+                <select id="correcta" th:field="*{correcta}">
+                    <option value="">Elige la correcta</option>
+                    <option value="1">a) respuesta 1</option>
+                    <option value="2">b) respuesta 2</option>
+                    <option value="3">c) respuesta 3</option>
+                    <option value="4">d) respuesta 4</option>
+                </select>
+                <p class="error-campo" th:if="${#fields.hasErrors('correcta')}" th:errors="*{correcta}">Error</p>
+
+                <p class="error-campo" th:if="${#fields.hasErrors('testBienFormada')}"
+                   th:errors="*{testBienFormada}">Error</p>
+            </div>
+
+            <p class="acciones">
+                <button class="boton" type="submit">Guardar</button>
+                <a class="boton secundario" th:href="@{/profesor/preguntas}">Cancelar</a>
+            </p>
+        </form>
+    </section>
+</main>
+
+<footer class="pie">
+    <p>telosabes2026 &middot; Spring Boot 4 + Thymeleaf + MariaDB + Spring Security</p>
+</footer>
+
+<script>
+    (function () {
+        // Muestra u oculta las respuestas segun el tipo elegido.
+        var bloque = document.getElementById('bloque-respuestas');
+        var tipos = document.querySelectorAll('input[name="tipo"]');
+
+        function actualizarTipo() {
+            var marcado = document.querySelector('input[name="tipo"]:checked');
+            bloque.hidden = !marcado || marcado.value === 'TEXTO';
+        }
+
+        Array.prototype.forEach.call(tipos, function (radio) {
+            radio.addEventListener('change', actualizarTipo);
+        });
+        actualizarTipo();
+
+        // Filtro del criterio: oculta las opciones que no coinciden.
+        var filtro = document.getElementById('filtroCriterio');
+        var select = document.getElementById('criterioId');
+
+        filtro.addEventListener('input', function () {
+            var buscado = filtro.value.toLowerCase();
+
+            Array.prototype.forEach.call(select.querySelectorAll('optgroup'), function (grupo) {
+                var visibles = 0;
+                Array.prototype.forEach.call(grupo.querySelectorAll('option'), function (opcion) {
+                    var coincide = opcion.textContent.toLowerCase().indexOf(buscado) !== -1;
+                    opcion.hidden = !coincide;
+                    if (coincide) {
+                        visibles++;
+                    }
+                });
+                grupo.hidden = visibles === 0;
+            });
+        });
+    })();
+</script>
+
+</body>
+</html>

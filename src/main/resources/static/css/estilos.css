@@ -423,3 +423,75 @@ td.numero, th.numero {
     white-space: nowrap;
 }
 
+/* ---------- Preguntas (/profesor/preguntas) ---------- */
+.cabecera-seccion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.cabecera-seccion h2 {
+    margin: 0;
+}
+
+.cabecera-seccion .boton {
+    margin-top: 0;
+}
+
+.etiqueta-tipo {
+    display: inline-block;
+    margin-right: .35rem;
+    background: #e8eef8;
+    color: #3568b8;
+    border: 1px solid #cbd9ee;
+    border-radius: 999px;
+    padding: .1rem .5rem;
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+
+.codigo-criterio {
+    font-size: .85rem;
+}
+
+.texto-criterio {
+    margin-top: .15rem;
+    font-size: .8rem;
+}
+
+.opciones-tipo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: .35rem;
+}
+
+.opciones-tipo .opcion-radio {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    margin: 0;
+    font-weight: normal;
+}
+
+.opciones-tipo input[type="radio"] {
+    width: auto;
+    margin: 0;
+}
+
+.filtro-criterio {
+    margin-bottom: .4rem;
+}
+
+#bloque-respuestas[hidden] {
+    display: none;
+}
+
+#bloque-respuestas h3 {
+    margin: 1.5rem 0 .25rem;
+    font-size: 1rem;
+}
+
